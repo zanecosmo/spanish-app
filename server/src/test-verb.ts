@@ -1,12 +1,12 @@
 import { GrammaticalNumber, Word, PartsOfSpeech } from "./types";
 
 export const verb: Word = {
-    id: 52,
+    id: 53,
     group: null,
     notes: null,
     wordPairs: [
         {
-            id: 69,
+            id: 76,
             english: "to do/make",
             spanish: "hacer",
             difficulty: null,
@@ -19,7 +19,7 @@ export const verb: Word = {
             case: null
         },
         {
-            id: 68,
+            id: 75,
             english: "i do/make",
             spanish: "hago",
             difficulty: null,
@@ -32,7 +32,7 @@ export const verb: Word = {
             case: null
         },
         {
-            id: 67,
+            id: 74,
             english: "we do/make",
             spanish: "hacemos",
             difficulty: null,
@@ -45,7 +45,7 @@ export const verb: Word = {
             case: null
         },
         {
-            id: 66,
+            id: 73,
             english: "you do/make",
             spanish: "haces",
             difficulty: null,
@@ -58,7 +58,7 @@ export const verb: Word = {
             case: null
         },
         {
-            id: 65,
+            id: 72,
             english: "you do/make (plural)",
             spanish: "hacen",
             difficulty: null,
@@ -71,7 +71,7 @@ export const verb: Word = {
             case: null
         },
         {
-            id: 64,
+            id: 71,
             english: "he/she/it does/makes",
             spanish: "hace",
             difficulty: null,
@@ -84,7 +84,7 @@ export const verb: Word = {
             case: null
         },
         {
-            id: 63,
+            id: 70,
             english: "they do/make",
             spanish: "hacen",
             difficulty: null,

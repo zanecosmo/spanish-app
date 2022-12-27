@@ -8,9 +8,8 @@ const run = async (): Promise<void> => {
     await database.connect();
     app.listen(8000, async (): Promise<void> => {
         console.log("YOUR SERVER IS RUNNING ON 8000, YOU'D BETTER GO CATCH IT");
-        await database.deleteWord(52);
-        // const wordId = await database.updateWord(verb);
-        // console.log(wordId);
+        const wordId = await database.updateWord(verb);
+        console.log(wordId);
     });
 };
 
