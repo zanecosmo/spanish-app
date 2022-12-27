@@ -1,2 +1,2 @@
 # spanish-app
-new repo for spanish-app
+flashcard based app for learning spanish.
