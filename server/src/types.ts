@@ -2,7 +2,7 @@ import { IncomingMessage, Server, ServerResponse } from "http";
 import { ConnectionPool, PreparedStatement, Transaction } from "mssql";
 
 export interface GrammaticalInfo {
-    partOfSpeech: string;
+    partOfSpeech: PartsOfSpeech;
     infinitive: boolean;
     person: number | null;
     number: string | null;
@@ -29,11 +29,19 @@ export type U<T> = T | undefined;
 
 export interface IdResult { id: number };
 
+export interface User {
+    id: number | undefined;
+    username: string;
+    password: string;
+    role: Roles;
+};
+
 export interface Database {
-    connect: () => Promise<void>;
+    connect: () => Promise<ConnectionPool>;
     insertWord: (word: Word) => Promise<number>;
     deleteWord: (parentId: number) => Promise<void>;
     updateWord: (word: Word) => Promise<number>;
+    getUserById: (id: number) => Promise<any>
 };
 
 export interface SqlOperation<T> {
@@ -41,6 +49,11 @@ export interface SqlOperation<T> {
     preparedStatement: PreparedStatement;
     result: T | undefined;
     word: Word;
+};
+
+export enum Roles {
+    ADMIN = "ADMIN",
+    USER = "USER"
 };
 
 export enum PartsOfSpeech {
