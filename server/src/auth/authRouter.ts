@@ -1,41 +1,74 @@
-import express, { application, Request, Response, Router } from "express";
-import { Roles } from "../types";
+import express, { NextFunction, Request, RequestHandler, Response, Router } from "express";
+import { Database, Roles, User } from "../types";
+// import { database } from "../sql/database/database";
+import  bcrypt from "bcrypt";
 
-const authRouter: Router = express.Router();
+const doesUsernameExist = async (username: string, database: Database): Promise<boolean> => {
+    return await database.getUserByUsername(username) ? true : false;
+};
 
-authRouter.post("/login", (req: Request, res: Response) => {
-    const { email, password } = req.body;
+interface TypedRequestBody<T> extends Request {
+    body: T;
+};
 
-    // get user by email, and if a user exists, check password
-    // compare stored password and if good log in user. if bad, send response (bcrypt)
-
-    res.status(200).send({ success: true, data: /*jwt?*/ "JWT"}); // username exists and password matches
-    res.status(403).send({ success: false, data: null }); // username exists but password does not match
-    res.status(404).send({ success: false, data: null }); // username does not exist in db
-});
-
-authRouter.post("/register", (req: Request, res: Response) => {
-    const { username, password } = req.body;
-
+const registerNewUser = (database: Database): RequestHandler => {
+    return async (req: TypedRequestBody<User>, res: Response): Promise<void> => {
+        const { username, password } = req.body;
     
-    // see if that username already exists
-    // if it does res.send error
+        if (await doesUsernameExist(username, database)) {
+            res.status(500).send({ success: false, data: `Account already exists with username ${username}` });
+            return;
+        };
+    
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-    // else
+        console.log(hashedPassword.length);
+    
+        const user: User = {
+            id: undefined,
+            username: username,
+            password: hashedPassword,
+            role: Roles.USER
+        };
+    
+        const newUser: User = await database.createUser(user);
+    
+        // do jwt log in stuff
+    
+        res.status(200).send({ success: true, data: null }); // successful registration
+    };
+};
 
-    // create new user with username and password
-    // salt and hash password (bcrypt + types)
-    // add user to users table in db
+const loginUser = (database: Database): RequestHandler => {
+    return async (req: TypedRequestBody<User>, res: Response, next: NextFunction): Promise<void> => {
+        // const { id, username, password, role } = req.body;
 
-    // log the user in
-    // generate jwt (jsonwetokens)
-    // res.send jwt
+        const user = await database.getUserByUsername(req.body.username);
 
-    res.status(200).send({ suuccess: true, data: null }); // successful registration
-    res.status(403).send({ success: false, data: null }); // username already exists
-});
+        if (!user) {
+            res.status(404).send({ success: false, data: null }); // username does not exist in db
+            return;
+        };
 
-export { authRouter };
+        const passwordsDoMatch = await bcrypt.compare(req.body.password, user.password);
 
-// this router handles registration, logging in, and logging out routes
-// its middleware handles authorization and authentication
+        if (!passwordsDoMatch) {
+            res.status(403).send({ success: false, data: null }); // username exists but password does not match
+            return;
+        };
+        
+        // do jwt log in stuff
+
+        res.status(200).send({ success: true, data: /*jwt?*/ "JWT"}); // username exists and password matches
+    };
+};
+
+export const authRouterWithDatabase = (database: Database): Router => {
+    const router: Router = Router();
+
+    router.post("/register", registerNewUser(database));
+    router.post("/login", loginUser(database));
+
+    return router;
+};

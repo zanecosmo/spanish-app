@@ -1,14 +1,14 @@
-import { Word } from "../../../types";
+import { U, User } from "../../../types";
 import sql, { ConnectionPool, IProcedureResult, Transaction } from "mssql";
 
-export const getUserById = async (id: number, pool: ConnectionPool): Promise<void> => {
+export const getUserById = async (id: number, pool: ConnectionPool): Promise<U<User>> => {
     const transaction: Transaction = await pool.transaction().begin();
 
-    const user: IProcedureResult<any> = await transaction.request()
+    const userResult: IProcedureResult<User> = await transaction.request()
     .input("id", sql.Int, id)
     .execute("get_user_by_id");
 
-    console.log(user);
-
-    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE"));
+    await transaction.commit();
+    
+    return userResult.recordset[0];
 };

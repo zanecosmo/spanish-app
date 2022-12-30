@@ -37,11 +37,15 @@ export interface User {
 };
 
 export interface Database {
-    connect: () => Promise<ConnectionPool>;
+    connect: () => Promise<boolean>;
+    disconnect: () => Promise<boolean>;
+    isConnected: () => boolean;
     insertWord: (word: Word) => Promise<number>;
     deleteWord: (parentId: number) => Promise<void>;
     updateWord: (word: Word) => Promise<number>;
-    getUserById: (id: number) => Promise<any>
+    getUserById: (id: number) => Promise<U<User>>
+    getUserByUsername: (username: string) => Promise<U<User>>,
+    createUser: (user: User) => Promise<User>
 };
 
 export interface SqlOperation<T> {
