@@ -1,3 +1,4 @@
+import { Request } from "express";
 import { IncomingMessage, Server, ServerResponse } from "http";
 import { ConnectionPool, PreparedStatement, Transaction } from "mssql";
 
@@ -46,6 +47,10 @@ export interface Database {
     getUserById: (id: number) => Promise<U<User>>
     getUserByUsername: (username: string) => Promise<U<User>>,
     createUser: (user: User) => Promise<User>
+};
+
+export interface TypedRequestBody<T> extends Request {
+    body: T;
 };
 
 export interface SqlOperation<T> {

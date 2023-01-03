@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Spanish Words</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="homepage invisible">
+        <div class="greeting"></div>
+        <div class="submit-button logout"></div>
+    </div>
+    <div class="entry-screen">
+        <fieldset class="entry-form">
+            <legend>LOGIN</legend>
+    
+            <fieldset>
+                <legend>Username</legend>
+                <input class="username-input login" type="text" placeholder="username here">
+            </fieldset>
+            
+            <fieldset>
+                <legend>Password</legend>
+                <input class="password-input login" type="text" placeholder="username here">
+            </fieldset>
+    
+            <div class="submit-button login"></div>
+
+            <div class="validation-messages login invisible">
+                <div class="validation-1 login"></div>
+                <div class="validation-2 login"></div>
+                <div class="validation-3 login"></div>
+            </div>
+        </fieldset>
+        
+        <fieldset class="entry-form">
+            <legend>CREATE ACCOUNT</legend>
+            
+            <fieldset>
+                <legend>Username</legend>
+                <input class="username-input create-account" type="text" placeholder="username here">
+            </fieldset>
+            
+            <fieldset>
+                <legend>Password</legend>
+                <input class="password-input create-account" type="text" placeholder="username here">
+            </fieldset>
+    
+            <div class="submit-button create-account"></div>
+
+            <div class="validation-messages create-account invisible">
+                <div class="validation-1 create-account"></div>
+                <div class="validation-2 create-account"></div>
+                <div class="validation-3 create-account"></div>
+            </div>
+        </fieldset>
+        <div class="response-error"></div>
+    </div>
+
+	<script type="module" src="script.js"></script>
+  </body>
+</html>

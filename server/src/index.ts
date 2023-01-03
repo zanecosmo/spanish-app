@@ -5,6 +5,11 @@ import passport from "passport";
 import { JWTStrategy } from "./auth/jwt-strategy";
 import { Roles, U, User } from "./types";
 import { authRouterWithDatabase } from "./auth/authRouter";
+import dotenv from "dotenv";
+import { authenticateToken } from "./auth/authenticateToken";
+
+dotenv.config();
+if (!process.env.ACCESS_TOKEN_SECRET) throw new Error("JWT ACCESS TOKEN SECRET MUST BE DEFINED");
 
 const run = async () => {
     // application setup
@@ -12,15 +17,18 @@ const run = async () => {
     await database.connect();
 
     // setup auth middleware
-    passport.use(JWTStrategy);
+    // passport.use(JWTStrategy);
 
     // use middlewares
     app.use(express.json());
 
     app.use(authRouterWithDatabase(database)); // attach database to auth router
 
-    app.use(passport.authenticate("jwt", { session: false }));
+    // app.use(passport.authenticate("jwt", { session: false }));
 
+    app.use(authenticateToken)
+
+    app.use("/", express.static(`public`));
 
     app.post("/add-word", async (req: Request, res: Response): Promise<void> => {
         try {
@@ -66,30 +74,6 @@ const run = async () => {
 
     app.listen(8000, async (): Promise<void> => {
         console.log("YOUR SERVER IS RUNNING ON 8000, YOU'D BETTER GO CATCH IT");
-        
-        const nonExistantUser: U<User> = await database.getUserById(2);
-        console.log(`1. ${nonExistantUser}`);
-
-        const extantUser: U<User> = await database.getUserById(1);
-        console.log(`2. ${extantUser}`);
-
-        const userConfig: User = {
-            id: undefined,
-            username: "bobby",
-            password: "peepee",
-            role: Roles.USER
-        };
-
-        const newUser: User = await database.createUser(userConfig);
-        console.log(`3. ${newUser.id}`);
-
-        if (!newUser.id) {
-            console.log("USER HAS NO ID FOR SOME REASON");
-            return;
-        };
-
-        const userTest: U<User> = await database.getUserById(newUser.id);
-        console.log(`4. ${userTest}`);
     });
 };
 

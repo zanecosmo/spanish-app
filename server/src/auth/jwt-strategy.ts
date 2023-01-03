@@ -1,10 +1,13 @@
 import { Request } from "express";
 import { database } from "../sql/database/database";
 import passportJWT, { Strategy, StrategyOptions, VerifiedCallback, VerifyCallbackWithRequest } from "passport-jwt";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const verifyCallback: VerifyCallbackWithRequest = async (req: Request, jwtPayload: any, done: VerifiedCallback) => {
     try {
-        const user = await database.getUserById(jwtPayload.data._id);
+        const user = await database.getUserById(jwtPayload.id);
         req.user = user;
         return done(null, user);
     }
@@ -14,8 +17,8 @@ const verifyCallback: VerifyCallbackWithRequest = async (req: Request, jwtPayloa
 };
 
 const strategyOptions: StrategyOptions = {
-    secretOrKey: process.env.JWT_STRATEGY_SECRET,
-    jwtFromRequest: (req: Request): string | null => req && req.cookies ? req.cookies["jwt"] : null,
+    secretOrKey: process.env.ACCESS_TOKEN_SECRET,
+    jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
     passReqToCallback: true
 };
 

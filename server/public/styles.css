@@ -1,0 +1,45 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+
+body {
+    position: fixed;
+}
+
+:root {
+    --enter-var-here: #ffffff;
+}
+
+.entry-screen {
+    display: flex;
+}
+
+.invisible {
+    display: none;
+}
+
+.entry-form {
+    margin: 20px 0px 0px 20px;
+}
+
+.submit-button {
+    margin-top: 10px;
+    height: 100px;
+    width: 200px;
+    background-color: red;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color:#c70000;
+}
+
+.username-input {
+
+}
+
+.password-input {
+
+}
