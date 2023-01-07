@@ -1,6 +1,5 @@
-import express, { NextFunction, Request, RequestHandler, response, Response, Router } from "express";
-import { Database, Roles, TypedRequestBody, User } from "../types";
-// import { database } from "../sql/database/database";
+import { Express,RequestHandler, Response, Router } from "express";
+import { Database, UserWithoutPassword, Roles, TypedRequestBody, User } from "../types";
 import jwt from "jsonwebtoken";
 import  bcrypt from "bcrypt";
 import dotenv from "dotenv";
@@ -31,18 +30,25 @@ const registerNewUser = (database: Database): RequestHandler => {
         };
     
         const newUser: User = await database.createUser(user);
+
+        const responseUser: UserWithoutPassword = {
+            id: newUser.id,
+            username: newUser.username,
+            role: newUser.role
+        };
     
         const token = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET!);
     
-        res.status(200).send({ success: true, accessToken: token });
+        res
+        .status(200)
+        .cookie("jwt", token, { httpOnly: true })
+        .send({ success: true, user: responseUser });
     };
 };
 
 const loginUser = (database: Database): RequestHandler => {
     return async (req: TypedRequestBody<User>, res: Response): Promise<void> => {
         const { username, password } = req.body;
-
-        console.log(`username: ${username}, password: ${password}`);
 
         const user = await database.getUserByUsername(username);
 
@@ -60,34 +66,31 @@ const loginUser = (database: Database): RequestHandler => {
         
         const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!);
 
-        res.status(200).set("authorization", ).json({ success: true, accessToken: token });
+        const responseUser: UserWithoutPassword = {
+            username: user.username,
+            role: user.role,
+            id: user.id
+        };
+
+        res
+        .status(200)
+        .cookie("jwt", token, { httpOnly: true })
+        .send({ success: true, user: responseUser });
     };
 };
 
 const logoutUser = (database: Database) => (req: TypedRequestBody<User>, res: Response) => {
     console.log("ATTEMPTING TO LOGOUT");
-    return res.status(200).send({ success: true, data: "TEST SUCCESSFUL" });
+    res.clearCookie("jwt");
+    return res.status(200).send({ success: true, data: "LOGOUT SUCCESSFUL" });
 };
 
-// export const authRouter = {
-//     attachDatabase: (database: Database): Router => {
-//         const router: Router = Router();
-
-//         router.post("/register", registerNewUser(database));
-//         router.post("/login", loginUser(database));
-
-//         return router;
-//     }
-// };
-        
-
-
-export const authRouterWithDatabase = (database: Database): Router => {
+export const enableAuthRoutes = (app: Express, database: Database): void => {
     const router: Router = Router();
 
     router.post("/create-account", registerNewUser(database));
     router.post("/login", loginUser(database));
     router.post("/logout", logoutUser(database));
 
-    return router;
+    app.use(router);
 };

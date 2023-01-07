@@ -9,7 +9,6 @@ export const getUserByUsername = async (username: string, pool: ConnectionPool):
     .execute("get_user_by_username");
 
     transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE"));
-    console.log(userResult.recordsets)
 
     return userResult.recordset[0];
 };

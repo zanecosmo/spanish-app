@@ -1,6 +1,5 @@
 import { Request } from "express";
-import { IncomingMessage, Server, ServerResponse } from "http";
-import { ConnectionPool, PreparedStatement, Transaction } from "mssql";
+import { PreparedStatement, Transaction } from "mssql";
 
 export interface GrammaticalInfo {
     partOfSpeech: PartsOfSpeech;
@@ -37,9 +36,15 @@ export interface User {
     role: Roles;
 };
 
+export interface UserWithoutPassword {
+    id: number | undefined;
+    username: string;
+    role: Roles;
+};
+
 export interface Database {
-    connect: () => Promise<boolean>;
-    disconnect: () => Promise<boolean>;
+    connect: () => Promise<void>;
+    disconnect: () => Promise<void>;
     isConnected: () => boolean;
     insertWord: (word: Word) => Promise<number>;
     deleteWord: (parentId: number) => Promise<void>;
@@ -47,6 +52,10 @@ export interface Database {
     getUserById: (id: number) => Promise<U<User>>
     getUserByUsername: (username: string) => Promise<U<User>>,
     createUser: (user: User) => Promise<User>
+};
+
+export interface CookieObject {
+    [key: string]: any;
 };
 
 export interface TypedRequestBody<T> extends Request {

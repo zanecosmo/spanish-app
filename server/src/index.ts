@@ -1,76 +1,37 @@
-import express, {Express, Request, Response} from "express";
-import { verb } from "./test-verb";
+import express, {Express} from "express";
 import { database } from "./sql/database/database";
-import passport from "passport";
-import { JWTStrategy } from "./auth/jwt-strategy";
-import { Roles, U, User } from "./types";
-import { authRouterWithDatabase } from "./auth/authRouter";
+import { enableAuthRoutes } from "./routes/auth-router";
 import dotenv from "dotenv";
-import { authenticateToken } from "./auth/authenticateToken";
+import { verifyToken } from "./middleware/verify-token";
+import { enableCRUDRoutes } from "./routes/word-crud-router";
+import cors from "cors";
 
 dotenv.config();
 if (!process.env.ACCESS_TOKEN_SECRET) throw new Error("JWT ACCESS TOKEN SECRET MUST BE DEFINED");
 
 const run = async () => {
-    // application setup
-    const app: Express = express();
-    await database.connect();
+    const corsOptions = {
+        origin: "http://localhost:5000",
+        optionsSuccessStatus: 200
+    };
 
-    // setup auth middleware
-    // passport.use(JWTStrategy);
+    const app: Express = express(); // generate express app
+    
+    await database.connect(); // to create a database pool for queries
 
-    // use middlewares
-    app.use(express.json());
+    app.use(cors(corsOptions));
 
-    app.use(authRouterWithDatabase(database)); // attach database to auth router
+    app.use(express.json()); // to parse request body
 
-    // app.use(passport.authenticate("jwt", { session: false }));
+    // app.use("/", express.static(`../client/build`)); // serve static files
+    
+    app.use("/", express.static(`./public`)); // serve static files
 
-    app.use(authenticateToken)
-
-    app.use("/", express.static(`public`));
-
-    app.post("/add-word", async (req: Request, res: Response): Promise<void> => {
-        try {
-            const parentId = await database.insertWord(req.body);
-            res.status(200).send({ parentId: parentId });
-        }
-        catch (error) {
-            res.status(500).send({ error: error });
-        };
-    });
-
-    app.get("/test-get-word", async (req: Request, res: Response): Promise<void> => {
-        // req should have the type of word in the 
-        console.log(req.body);
-        res.send({ butt: "GET" });
-    });
-
-    app.get("/test-get-all", async (req: Request, res: Response): Promise<void> => {
-        console.log(req.body);
-        // 
-        res.send({ butt: "GET ALL" });
-    });
-
-    app.put("/update-word", async (req: Request, res: Response): Promise<void> => {
-        try {
-            const parentWordId = await database.updateWord(req.body);
-            res.status(200).send({ parentWordId: parentWordId });
-        }
-        catch (error) {
-            res.status(500).send({ error: error });
-        };
-    });
-
-    app.delete("/delete-word", async (req: Request, res: Response): Promise<void> => {
-        try {
-            await database.deleteWord(req.body);
-            res.status(204);
-        }
-        catch (error) {
-            res.status(500).send({ error: error });
-        };
-    });
+    enableAuthRoutes(app, database); // enable auth router for login/registration and jwt
+    
+    app.use(verifyToken); // all internal routes must be authenticated with jwt
+    
+    enableCRUDRoutes(app, database); // enable admin router for CRUD word operations
 
     app.listen(8000, async (): Promise<void> => {
         console.log("YOUR SERVER IS RUNNING ON 8000, YOU'D BETTER GO CATCH IT");

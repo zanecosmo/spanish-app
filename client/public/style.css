@@ -63,7 +63,7 @@ body {
     background-color:#2176cb;
 }
 
-.input {
+input {
     outline: none;
     width: calc(100% - 24px);
     border: none;

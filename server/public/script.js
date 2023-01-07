@@ -1,23 +1,23 @@
+const state = { accessToken: null };
+
 const loginInputs = {
     username:  {
-        element: document.querySelector(".username-input.login"),
+        element: document.querySelector(".username.input.login"),
         validationMessage: null
     },
     password: {
-        element: document.querySelector(".password-input.login"),
+        element: document.querySelector(".password.input.login"),
         validationMessage: null
     }
 };
 
-const state = { accessToken: null };
-
 const createAccountInputs = {
     username:  {
-        element: document.querySelector(".username-input.create-account"),
+        element: document.querySelector(".username.input.create-account"),
         validationMessage: null
     },
     password: {
-        element: document.querySelector(".password-input.create-account"),
+        element: document.querySelector(".password.input.create-account"),
         validationMessage: null
     }
 };
@@ -80,7 +80,21 @@ const extractUserInfo = (inputs) => {
     return user;
 };
 
+const resetValues = (inputs) => {
+    console.log(inputs);
+    for (let input in inputs) {
+        console.log(inputs[input].textContent);
+        inputs[input].element.textContent = "";
+    };
+};
+
 const loadHomepage = () => {
+    resetValues(loginInputs);
+    resetValues(createAccountInputs);
+    const loginResponseMessage = document.querySelector(".response-error.login");
+    loginResponseMessage.textContent = "";
+    const registerResponseMessage = document.querySelector(".response-error.create-account");
+    registerResponseMessage.textContent = "";
     makeInvisible(".entry-screen");
     makeVisible(".homepage");
 };
@@ -122,12 +136,12 @@ const attemptLogin = async () => {
     const body = await response.json();
 
     if (response.status === 403) {
-        const responseMessage = document.querySelector(".response-error");
+        const responseMessage = document.querySelector(".response-error.login");
         responseMessage.textContent = body.message;
         return;
     };
 
-    state.accessToken = body.accessToken;
+    state.accessToken = `${body.accessToken}`;
 
     loadHomepage();
 };
@@ -144,7 +158,7 @@ const attemptCreateAccount = async () => {
         throw new Error("USERNAME OR PASSWORD VALIDATED INCORRECTLY");
     };
 
-    makeInvisible(".validation-messages.login");
+    makeInvisible(".validation-messages.create-account");
 
     const headers = new Headers({
         "Accept": "application/json, text/plain, */*",
@@ -163,12 +177,12 @@ const attemptCreateAccount = async () => {
     const body = await response.json();
 
     if (response.status === 403) {
-        const responseMessage = document.querySelector(".response-error");
+        const responseMessage = document.querySelector(".response-error.create-account");
         responseMessage.textContent = body.message;
         return;
     };
 
-    state.accessToken = body.accessToken;
+    state.accessToken = `${body.accessToken}shart`;
 
     loadHomepage();
 };
@@ -177,7 +191,6 @@ const attemptLogout = async () => {
     const headers = new Headers({
         "Accept": "application/json, text/plain, */*",
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${state.accessToken}`
     });
 
     const jsonMessage = {
@@ -191,26 +204,22 @@ const attemptLogout = async () => {
     const response = await fetch(serverURL, jsonMessage);
     const body = await response.json();
 
-    if (response.status === 403) {
-        const responseMessage = document.querySelector(".response-error");
-        responseMessage.textContent = body.message;
+    if (response.status === 401) {
+        console.log(body.message);
         return;
     };
 
     unloadHomepage();
 };
 
-const loginButton = document.querySelector(".submit-button.login");
-const createAccountButton = document.querySelector(".submit-button.create-account");
-const logoutButton = document.querySelector(".submit-button.logout");
+const createListener = (classes, handler) => {
+    const element = document.querySelector(classes);
+    if (element === null) throw new Error(`DOM DOES NOT CONTAIN "${classes}" ELEMENTS`);
+    return element.addEventListener("click", handler);
+};
 
-if (loginButton === null) throw new Error("DOM DOES NOT CONTAIN LOGIN BUTTON ELEMENT");
-if (createAccountButton === null) throw new Error("DOM DOES NOT CONTAIN CREATE ACCOUNT BUTTON ELEMENT");
-if (logoutButton === null) throw new Error("DOM DOES NOT CONTAIN LOGOUT BUTTON ELEMENT");
-
-loginButton.addEventListener("click", attemptLogin);
-createAccountButton.addEventListener("click", attemptCreateAccount);
-logoutButton.addEventListener("click", attemptLogout);
-
+createListener(".submit-button.login", attemptLogin);
+createListener(".submit-button.create-account", attemptCreateAccount);
+createListener(".submit-button.logout", attemptLogout);
 
 ///////////////////////////////////////////////////////////////////

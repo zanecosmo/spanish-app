@@ -1,1 +1,0 @@
-export const logError = (err: Error | undefined): void => err && console.log(`ERROR: ${err}`);

@@ -1,0 +1,83 @@
+import {
+    Roles,
+    User,
+    ValidatedInput,
+    Store,
+    LoginFormSlice,
+    ZustandGet,
+    ZustandSet
+} from "../../types";
+import produce from "immer";
+import { validateInput } from "../../utils";
+
+export const loginFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): LoginFormSlice => ({
+    username: {
+        value: "",
+        update: (newValue: string) => {
+            set(produce((state: Store) => {
+                    state.loginForm.username.value = newValue
+                })
+            );
+        },
+        validationMessage: null
+    },
+    password: {
+        value: "",
+        update: (newValue: string) => {
+            set(produce((state: Store) => {
+                    state.loginForm.password.value = newValue
+                })
+            )
+        },
+        validationMessage: null
+    },
+    responseMessage: null,
+    attemptLogin: async () => {
+        // validate logic and set messages to be rendered by react + zustand
+        set(produce((state: Store) => {
+            const form: { username: ValidatedInput, password: ValidatedInput } = state.loginForm;
+            form.username.validationMessage = validateInput(form.username.value, "username");
+            form.password.validationMessage = validateInput(form.password.value, "password");
+        }));
+
+        const { username, password } = get().loginForm;
+        if (username.validationMessage !== null || password.validationMessage !== null) return;
+
+        // build fetch request
+        const user: User = {
+            id: undefined,
+            username: get().loginForm.username.value,
+            password: get().loginForm.password.value,
+            role: Roles.USER
+        };
+    
+        const request = {
+            method: "POST",
+            headers: {
+                "Accept": "application/json, text/plain, */*",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(user)
+        };
+    
+        // make and handle request
+        const response = await fetch("http://localhost:8000/login", request);
+        const body = await response.json();
+    
+        if (response.status !== 200) {
+            set(produce((state: Store) => {
+                state.loginForm.responseMessage = body.message;
+            }));
+            return;
+        };
+
+        set(produce((state: Store) => {
+            state.user = body.user;
+            state.loginForm.responseMessage = null;
+            state.loginForm.username.value = "";
+            state.loginForm.password.value = "";
+        })); 
+
+        console.log(get().user?.username);
+    }
+});
