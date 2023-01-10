@@ -12,6 +12,21 @@ export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get)
     createAccountForm: {
         ...createAccountFormSlice(set, get)
     },
+    clearForm: () => {
+        set(produce((state: Store) => {
+            state.loginForm.username.value = "";
+            state.loginForm.password.value = "";
+            state.loginForm.responseMessage = null;
+            state.loginForm.username.validationMessage = null;
+            state.loginForm.password.validationMessage = null;
+
+            state.createAccountForm.username.value = "";
+            state.createAccountForm.password.value = "";
+            state.createAccountForm.responseMessage = null;
+            state.createAccountForm.username.validationMessage = null;
+            state.createAccountForm.password.validationMessage = null;
+        }));
+    },
     attemptLogout: async () => {
         const jsonMessage = {
             method: "POST",

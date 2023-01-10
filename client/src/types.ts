@@ -32,7 +32,7 @@ export type ZustandGet<T> = () => T;
 export interface LoginFormSlice {
     username: ValidatedInput,
     password: ValidatedInput,
-    responseMessage: string | null
+    responseMessage: string | null;
     attemptLogin: () => Promise<void>;
 };
 
@@ -47,6 +47,7 @@ export interface Store {
     user: UserWithoutPassword | null;
     loginForm: LoginFormSlice;
     createAccountForm: CreateAccountFormSlice;
+    clearForm: () => void;
     attemptLogout: () => Promise<void>
     // testGetWord: () => Promise<void>
 };

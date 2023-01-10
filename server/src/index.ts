@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import { verifyToken } from "./middleware/verify-token";
 import { enableCRUDRoutes } from "./routes/word-crud-router";
 import cors from "cors";
+import { BaseWordPairDTO, ExtendedWordDTO, Roles, UserWithoutPassword } from "./types";
+// import { verb } from "./test-verb";
 
 dotenv.config();
 if (!process.env.ACCESS_TOKEN_SECRET) throw new Error("JWT ACCESS TOKEN SECRET MUST BE DEFINED");
@@ -35,6 +37,16 @@ const run = async () => {
 
     app.listen(8000, async (): Promise<void> => {
         console.log("YOUR SERVER IS RUNNING ON 8000, YOU'D BETTER GO CATCH IT");
+
+        // const testUser: UserWithoutPassword = {
+        //     id: 78,
+        //     username: "fart",
+        //     role: Roles.USER
+        // };
+
+        // const extendedWordDTO: ExtendedWordDTO = await database.getWord(11, testUser);
+
+        // console.log(extendedWordDTO);
     });
 };
 

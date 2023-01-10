@@ -1,14 +1,14 @@
 import { GrammaticalNumber, Word, PartsOfSpeech } from "./types";
 
 export const verb: Word = {
-    id: 53,
+    id: undefined,
     group: null,
     notes: null,
     wordPairs: [
         {
-            id: 76,
-            english: "to do/make",
-            spanish: "hacer",
+            id: undefined,
+            english: "to think/consider",
+            spanish: "pensar",
             difficulty: null,
             parentId: undefined,
             partOfSpeech: PartsOfSpeech.VERB,
@@ -19,9 +19,9 @@ export const verb: Word = {
             case: null
         },
         {
-            id: 75,
-            english: "i do/make",
-            spanish: "hago",
+            id: undefined,
+            english: "i think/consider",
+            spanish: "pienso",
             difficulty: null,
             parentId: undefined,
             partOfSpeech: PartsOfSpeech.VERB,
@@ -32,9 +32,9 @@ export const verb: Word = {
             case: null
         },
         {
-            id: 74,
-            english: "we do/make",
-            spanish: "hacemos",
+            id: undefined,
+            english: "we think/consider",
+            spanish: "pensamos",
             difficulty: null,
             parentId: undefined,
             partOfSpeech: PartsOfSpeech.VERB,
@@ -45,9 +45,9 @@ export const verb: Word = {
             case: null
         },
         {
-            id: 73,
-            english: "you do/make",
-            spanish: "haces",
+            id: undefined,
+            english: "you think/consider",
+            spanish: "piensas",
             difficulty: null,
             parentId: undefined,
             partOfSpeech: PartsOfSpeech.VERB,
@@ -58,9 +58,9 @@ export const verb: Word = {
             case: null
         },
         {
-            id: 72,
-            english: "you do/make (plural)",
-            spanish: "hacen",
+            id: undefined,
+            english: "you think/consider (plural)",
+            spanish: "piensa",
             difficulty: null,
             parentId: undefined,
             partOfSpeech: PartsOfSpeech.VERB,
@@ -71,9 +71,9 @@ export const verb: Word = {
             case: null
         },
         {
-            id: 71,
-            english: "he/she/it does/makes",
-            spanish: "hace",
+            id: undefined,
+            english: "he/she/it thinks/considers",
+            spanish: "piensan",
             difficulty: null,
             parentId: undefined,
             partOfSpeech: PartsOfSpeech.VERB,
@@ -84,9 +84,9 @@ export const verb: Word = {
             case: null
         },
         {
-            id: 70,
-            english: "they do/make",
-            spanish: "hacen",
+            id: undefined,
+            english: "they think/consider",
+            spanish: "piensan",
             difficulty: null,
             parentId: undefined,
             partOfSpeech: PartsOfSpeech.VERB,

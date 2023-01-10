@@ -9,14 +9,16 @@ export const LoginForm: FC = (): JSX.Element => {
         classes: "username login",
         updateValue: useStore((state: Store) => state.loginForm.username.update),
         stateValue: useStore((state: Store) => state.loginForm.username.value),
-        placeholder: "Username"
+        placeholder: "Enter username here",
+        name: "Username"
     };
 
     const passwordInputProps: InputProps = {
         classes: "password login",
         updateValue: useStore((state: Store) => state.loginForm.password.update),
         stateValue: useStore((state: Store) => state.loginForm.password.value),
-        placeholder: "Password"
+        placeholder: "Enter password here",
+        name: "Password"
     };
 
     const submitButtonProps: ButtonProps = {
@@ -31,13 +33,12 @@ export const LoginForm: FC = (): JSX.Element => {
 
     return(
         <div className="entry-form">
-            <div className="title">LOGIN TO SPANISH-APP</div>
             <Input {...usernameInputProps}/>
-            {usernameValidationMessage && <>{usernameValidationMessage}</>}
+            {usernameValidationMessage && <div className="validation-message">{usernameValidationMessage}</div>}
             <Input {...passwordInputProps}/>
-            {passwordValidationMessage && <>{passwordValidationMessage}</>}
+            {passwordValidationMessage && <div className="validation-message">{passwordValidationMessage}</div>}
+            {responseMessage !== null && <div className="response-message">{responseMessage}</div>}
             <Button {...submitButtonProps}/>
-            {responseMessage !== null && <>{responseMessage}</>}
         </div>
     );
 };

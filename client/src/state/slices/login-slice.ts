@@ -43,6 +43,10 @@ export const loginFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): 
         const { username, password } = get().loginForm;
         if (username.validationMessage !== null || password.validationMessage !== null) return;
 
+        set(produce((state: Store) => {
+            state.loginForm.responseMessage = null;
+        }));
+
         // build fetch request
         const user: User = {
             id: undefined,
@@ -65,6 +69,7 @@ export const loginFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): 
         const body = await response.json();
     
         if (response.status !== 200) {
+            console.log(response.status);
             set(produce((state: Store) => {
                 state.loginForm.responseMessage = body.message;
             }));
@@ -73,11 +78,8 @@ export const loginFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): 
 
         set(produce((state: Store) => {
             state.user = body.user;
-            state.loginForm.responseMessage = null;
-            state.loginForm.username.value = "";
-            state.loginForm.password.value = "";
-        })); 
+        }));
 
-        console.log(get().user?.username);
+        get().clearForm();
     }
 });

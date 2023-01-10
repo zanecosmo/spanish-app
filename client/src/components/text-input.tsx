@@ -5,18 +5,22 @@ export interface InputProps {
     updateValue: (value: string) => void;
     stateValue: string;
     placeholder: string;
+    name: string;
 };
 
 export const Input: FC<InputProps> = (props): JSX.Element => {
-    const { classes, updateValue, stateValue, placeholder } = props;
+    const { classes, updateValue, stateValue, placeholder, name } = props;
 
     return(
-        <input
-        className={classes}
-        type="text"
-        placeholder={placeholder}
-        value={stateValue}
-        onChange={(e) => updateValue(e.target.value)}>
-        </input>
+        <div>
+            <div className="input-name">{name}</div>
+            <input
+            className={classes}
+            type="text"
+            placeholder={placeholder}
+            value={stateValue}
+            onChange={(e) => updateValue(e.target.value)}>
+            </input>
+        </div>
     );
 };

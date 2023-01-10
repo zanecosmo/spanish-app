@@ -5,7 +5,6 @@ export const insertWord = async (word: Word, pool: ConnectionPool): Promise<numb
     const transaction: Transaction = await pool.transaction().begin();
 
     const createBaseWord: IProcedureResult<any> = await transaction.request()
-    .input("group", sql.NVarChar(20), word.group)
     .execute("create_base_word");
 
     const parentId: number = createBaseWord.returnValue;

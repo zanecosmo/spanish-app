@@ -14,13 +14,11 @@ export interface WordPair extends GrammaticalInfo {
     id: number | undefined;
     spanish: string;
     english: string;
-    difficulty: number | null;
     parentId: number | undefined;
 };
 
 export interface Word {
     id: number | undefined;
-    notes: string | null;
     group: string | null;
     wordPairs: Array<WordPair>;
 };
@@ -42,6 +40,32 @@ export interface UserWithoutPassword {
     role: Roles;
 };
 
+export interface BaseWordPairDTO {
+    id: number;
+    parentId: number;
+    english: string;
+    spanish: string;
+    partOfSpeech: PartsOfSpeech;
+    group: string | null;
+    difficulty: number | null;
+};
+
+export interface ExtendedWordPairDTO extends GrammaticalInfo {
+    id: number;
+    parentId: number;
+    english: string;
+    spanish: string;
+    partOfSpeech: PartsOfSpeech;
+    group: string | null;
+    difficulty: number | null;
+};
+
+export interface ExtendedWordDTO {
+    id: number | undefined;
+    group: string | null;
+    wordPairs: Array<ExtendedWordPairDTO>;
+};
+
 export interface Database {
     connect: () => Promise<void>;
     disconnect: () => Promise<void>;
@@ -49,9 +73,11 @@ export interface Database {
     insertWord: (word: Word) => Promise<number>;
     deleteWord: (parentId: number) => Promise<void>;
     updateWord: (word: Word) => Promise<number>;
-    getUserById: (id: number) => Promise<U<User>>
-    getUserByUsername: (username: string) => Promise<U<User>>,
-    createUser: (user: User) => Promise<User>
+    getUserById: (id: number) => Promise<U<User>>;
+    getUserByUsername: (username: string) => Promise<U<User>>;
+    createUser: (user: User) => Promise<User>;
+    getBaseWordPairs: (user: UserWithoutPassword) => Promise<Array<BaseWordPairDTO>>;
+    getWord: (wordId: number, user: UserWithoutPassword) => Promise<ExtendedWordDTO>;
 };
 
 export interface CookieObject {

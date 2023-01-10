@@ -9,19 +9,21 @@ export const CreateAccountForm: FC = (): JSX.Element => {
         classes: "username create-account",
         updateValue: useStore((state: Store) => state.createAccountForm.username.update),
         stateValue: useStore((state: Store) => state.createAccountForm.username.value),
-        placeholder: "Username"
+        placeholder: "Enter username here",
+        name: "Username"
     };
 
     const passwordInputProps: InputProps = {
         classes: "password create-account",
         updateValue: useStore((state: Store) => state.createAccountForm.password.update),
         stateValue: useStore((state: Store) => state.createAccountForm.password.value),
-        placeholder: "Password"
+        placeholder: "Enter password here",
+        name: "Password"
     };
 
     const submitButtonProps: ButtonProps = {
         classes: "submit-button create-account",
-        text: "CREATE",
+        text: "CREATE ACCOUNT",
         onClick: useStore((state: Store) => state.createAccountForm.attemptCreateAccount),
     };
 
@@ -31,13 +33,12 @@ export const CreateAccountForm: FC = (): JSX.Element => {
 
     return(
         <div className="entry-form">
-            <div className="title">CREATE ACCOUNT</div>
             <Input {...usernameInputProps}/>
-            {usernameValidationMessage && <>{usernameValidationMessage}</>}
+            {usernameValidationMessage && <div className="validation-message">{usernameValidationMessage}</div>}
             <Input {...passwordInputProps}/>
-            {passwordValidationMessage && <>{passwordValidationMessage}</>}
+            {passwordValidationMessage && <div className="validation-message">{passwordValidationMessage}</div>}
+            {responseMessage !== null && <div className="response-message">{responseMessage}</div>}
             <Button {...submitButtonProps}/>
-            {responseMessage !== null && <>{responseMessage}</>}
         </div>
     );
 };

@@ -1,60 +1,149 @@
-* {
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+@font-face {
+    font-family: "Montserrat";
+    src: url("./fonts/Montserrat-Regular.ttf");
 }
 
-body {
-    position: fixed;
-    margin: 0;
+* {
+    box-sizing: border-box;
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
 }
 
 :root {
+    --offwhite: #fdfdfd;
+    --dark-offwhite: #f8f8f8;
     --light-gray: #f3f3f3;
     --dark-gray: #909090;
     --darker-gray: #404040;
 }
 
+body {
+    position: fixed;
+    width: 100vw;
+    /* background-color: #84c2ff; */
+    margin: 0;
+}
+
+#root {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    /* background-color: #1389ff; */
+    background-image: linear-gradient(#6ab4ff, #1389ff);
+}
+
 .entry-screen {
-    display: flex;
-    padding-right: 20px;
+    margin-top: 100px;
+    display: block;
+    /* padding-right: 20px; */
     /* height: 100vh; */
     /* background-color: #f0f0f0; */
 }
 
-.entry-screen > * {
-    margin: 20px 0px 0px 20px;
+.entry-scene {
+    display: flex;
+    flex-flow: column nowrap;
+    margin-left: calc((100vw - 500px) / 2);
 }
 
 .invisible {
     display: none;
 }
 
+.form {
+    margin-top: 14px;
+    width: 500px;
+    border-radius: 14px  14px 14px 14px;
+    box-shadow: 6px 6px 38px 0px rgb(0, 0, 0, .18);
+}
+
 .entry-form {
-    padding-bottom: 12px;
-    /* border: 1px solid var(--light-gray); */
-    border-radius: 5px;
-    box-shadow: 0px 0px 6px 0px rgb(0, 0, 0, .18);
+    display: flex; /* to get rid of upper margin collapse */
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 0px 0px 14px 14px;
+    background-color: var(--offwhite);
+    z-index: -200;
 }
 
 .entry-form > * {
-    margin: 12px 12px 0px 12px;
+    margin: 12px 0px 0px 0px;
 }
 
 .title {
-    color: var(--darker-gray);
-    font-weight: bold;
-    letter-spacing: .1em;
+    color: var(--offwhite);
+    /* font-weight: bold; */
+    font-size: 2.6em;
+    letter-spacing: .15em;
+    padding: 14px;
     text-align: center;
+    border: 2px solid var(--offwhite);
+    border-radius: 14px;
+    width: 500px;
+}
+
+.button-container {
+    position: relative;
+    display: table;
+    border-collapse: collapse;
+}
+
+.login-form-button {
+    display: table-row;
+    background-color: var(--dark-offwhite);
+    width: 50%;
+    text-align: center;
+    font-size: 1.2em;
+    color: var(--darker-gray);
+    text-decoration: none;
+    padding: 14px;
+    /* border: 1px solid var(--dark-gray); */
+    /* border-radius: 14px 0px 0px 0px; */
+    cursor: pointer;
+    transition: background-color .1s, font-weight .1s, text-decoration .1s;
+    /* box-shadow: inset 0px -30px 30px -30px rgb(0, 0, 0, .18); */
+}
+
+.corner {
+    position: absolute;
+    bottom: 0;
+    width: 40px;
+    height: 20px;
+    background-color: var(--offwhite);
+    z-index: -100;
+}
+
+.left {
+    border-radius: 14px 0px 14px 0px;
+    /* border-right: none; */
+}
+
+.right {
+    border-radius: 0px 14px 0px 14px;
+}
+
+/* .login-form-button:hover {
+    background-color: var(--light-gray);
+} */
+
+.selected {
+    background-color: var(--offwhite);
+    font-weight: bold;
+    box-shadow: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
 }
 
 .submit-button {
     /* font-size: 1.5em; */
     /* letter-spacing: .1em; */
+    margin-top: 28px;
     color: #ffffff;
     text-align: center;
-    padding: 10px;
+    font-size: 1.2em;
+    padding: 12px;
     background-color: #2a94ff;
-    border-radius: 5px;
+    border-radius: 14px;
     cursor: pointer;
     transition: background-color .1s;
 }
@@ -65,25 +154,42 @@ body {
 
 input {
     outline: none;
-    width: calc(100% - 24px);
+    width: 100%;
     border: none;
-    border-radius: 5px;
-    padding: 10px;
+    border-radius: 14px;
+    padding: 14px;
     font-size: 1em;
     user-select: none;
     background-color: #f3f3f3;
     color: var(--darker-gray);
 }
 
-.input:focus {
-    border: 1px solid var(--dark-gray);
+input:focus {
+    /* border: 1px solid var(--dark-gray); */
 }
 
-.validation-1, .validation-2, .validation-3 {
+.input-name {
     color: var(--darker-gray);
-    font-size: .75em;
+    font-size: .9em;
+    font-weight: bold;
+    margin: 0px 0px 2px 8px;
 }
 
-.response-error {
-    color: #840000;
+.validation-message {
+    font-size: .9em;
+    color: #980000;
+    font-weight: bold;
+    margin: 2px 0px 2px 8px;
+}
+
+.response-message {
+    font-size: .9em;
+    color: #980000;
+    font-weight: bold;
+    margin: 28px 0px 2px 8px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-evenly;
 }

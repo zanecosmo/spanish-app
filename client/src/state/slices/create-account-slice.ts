@@ -43,6 +43,10 @@ export const createAccountFormSlice = (set: ZustandSet<Store>, get: ZustandGet<S
         const { username, password } = get().createAccountForm;
         if (username.validationMessage !== null || password.validationMessage !== null) return;
 
+        set(produce((state: Store) => {
+            state.createAccountForm.responseMessage = null;
+        }));
+
         // build fetch request
         const user: User = {
             id: undefined,
@@ -73,11 +77,8 @@ export const createAccountFormSlice = (set: ZustandSet<Store>, get: ZustandGet<S
 
         set(produce((state: Store) => {
             state.user = body.user;
-            state.createAccountForm.responseMessage = null;
-            state.createAccountForm.username.value = "";
-            state.createAccountForm.password.value = "";
         }));
 
-        console.log(get().user?.username);
+        get().clearForm();
     }
 });
