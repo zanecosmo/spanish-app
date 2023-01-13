@@ -43,11 +43,69 @@ export interface CreateAccountFormSlice {
     attemptCreateAccount: () => Promise<void>;
 };
 
+export interface AppSlice {
+    wordList: Array<BaseWordPairDTO> | null;
+    getBaseWordPairs: () => void;
+    getWord: (wordId: number) => void;
+    selectedWord: ExtendedWordDTO | null;
+};
+
 export interface Store {
     user: UserWithoutPassword | null;
     loginForm: LoginFormSlice;
     createAccountForm: CreateAccountFormSlice;
     clearForm: () => void;
-    attemptLogout: () => Promise<void>
+    attemptLogout: () => Promise<void>;
+    app: AppSlice;
     // testGetWord: () => Promise<void>
+};
+
+export enum PartsOfSpeech {
+    VERB = "VERB",
+    PRONOUN = "PRONOUN",
+    ADJECTIVE = "ADJECTIVE",
+    ADVERB = "ADVERB",
+    CONJUNCTION = "CONJUNCTION",
+    NOUN = "NOUN",
+    PREPOSITION = "PREPOSITION"
+};
+
+export interface GrammaticalInfo {
+    partOfSpeech: PartsOfSpeech;
+    infinitive: boolean;
+    person: number | null;
+    number: string | null;
+    gender: string | null;
+    case: string | null;
+};
+
+export interface ExtendedWordPairDTO extends GrammaticalInfo {
+    id: number;
+    parentId: number;
+    english: string;
+    spanish: string;
+    partOfSpeech: PartsOfSpeech;
+    group: string | null;
+    difficulty: number | null;
+};
+
+export interface ExtendedWordDTO {
+    id: number | undefined;
+    group: string | null;
+    wordPairs: Array<ExtendedWordPairDTO>;
+};
+
+export interface BaseWordPairDTO {
+    word_pair_id: number;
+    parent_word_id: number;
+    english: string;
+    spanish: string;
+    part_of_Speech: PartsOfSpeech;
+    group: string | null;
+    difficulty: number | null;
+};
+
+export enum GrammaticalNumber {
+    SINGULAR = "singular",
+    PLURAL = "plural"
 };

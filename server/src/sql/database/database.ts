@@ -1,4 +1,14 @@
-import { BaseWordPairDTO, Database, ExtendedWordDTO, U, User, UserWithoutPassword, Word } from "../../types";
+import {
+    BaseWordPairDTO,
+    Database,
+    DifficultyDTO,
+    ExtendedWordDTO,
+    GroupDTO,
+    U,
+    User,
+    UserDTO,
+    Word
+} from "../../types";
 import { insertWord } from "../transactions/admin/create-word";
 import { deleteWord } from "../transactions/admin/delete-word";
 import { databaseConfig } from "./database-config";
@@ -9,14 +19,14 @@ import { getUserByUsername } from "../transactions/auth/get-user-by-username";
 import { createUser } from "../transactions/auth/create-user";
 import { getBaseWordPairs } from "../transactions/user/get-base-word-pairs";
 import { getWord } from "../transactions/user/get-word";
+import { updateDifficulties } from "../transactions/user/update-difficulty";
+import { updateGroup } from "../transactions/user/update-group";
 
 let pool: ConnectionPool;
 
 export const database: Database = {
     connect: async (): Promise<void> => {
-        if (!pool || !pool.connected) {
-            pool = await sql.connect(databaseConfig);
-        };
+        if (!pool || !pool.connected) pool = await sql.connect(databaseConfig);
     },
     disconnect: async (): Promise<void> => {
         if (!pool || !pool.connected) return;
@@ -28,11 +38,17 @@ export const database: Database = {
     updateWord: async (word: Word): Promise<number> => await updateWord(word, pool),
     getUserById: async (id: number): Promise<U<User>> => await getUserById(id, pool),
     getUserByUsername: async (username: string): Promise<U<User>> => await getUserByUsername(username, pool),
-    createUser: async (user: User): Promise<User> => await createUser(user, pool),
-    getBaseWordPairs: async (user: UserWithoutPassword): Promise<Array<BaseWordPairDTO>> => {
+    createUser: async (user: User): Promise<UserDTO> => await createUser(user, pool),
+    getBaseWordPairs: async (user: UserDTO): Promise<Array<BaseWordPairDTO>> => {
         return await getBaseWordPairs(user, pool);
     },
-    getWord: async (wordId: number, user: UserWithoutPassword): Promise<ExtendedWordDTO> => {
+    getWord: async (wordId: number, user: UserDTO): Promise<ExtendedWordDTO> => {
         return await getWord(wordId, user, pool);
+    },
+    updateDifficulties: async (difficultyDTOs: Array<DifficultyDTO>, user: UserDTO): Promise<void> => {
+        return await updateDifficulties(difficultyDTOs, user, pool);
+    },
+    updateGroup: async (groupDTO: GroupDTO, user: UserDTO): Promise<void> => {
+        return await updateGroup(groupDTO, user, pool);
     }
 };

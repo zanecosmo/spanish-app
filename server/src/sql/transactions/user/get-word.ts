@@ -1,12 +1,11 @@
-import { ExtendedWordDTO, ExtendedWordPairDTO, UserWithoutPassword, Word } from "../../../types";
+import { ExtendedWordDTO, ExtendedWordPairDTO, UserDTO } from "../../../types";
 import sql, { ConnectionPool, IProcedureResult, Transaction } from "mssql";
 
 export const getWord = async (
     wordId: number,
-    user: UserWithoutPassword,
+    user: UserDTO,
     pool: ConnectionPool
 ): Promise<ExtendedWordDTO> => {
-    console.log(user.id);
     const transaction: Transaction = await pool.transaction().begin();
     
     const getWordResult: IProcedureResult<ExtendedWordPairDTO> = await transaction.request()

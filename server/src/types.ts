@@ -34,7 +34,7 @@ export interface User {
     role: Roles;
 };
 
-export interface UserWithoutPassword {
+export interface UserDTO {
     id: number | undefined;
     username: string;
     role: Roles;
@@ -66,6 +66,16 @@ export interface ExtendedWordDTO {
     wordPairs: Array<ExtendedWordPairDTO>;
 };
 
+export interface DifficultyDTO {
+    wordPairId: number;
+    difficulty: number;
+};
+
+export interface GroupDTO {
+    group: string;
+    parentWordId: number;
+};
+
 export interface Database {
     connect: () => Promise<void>;
     disconnect: () => Promise<void>;
@@ -75,9 +85,11 @@ export interface Database {
     updateWord: (word: Word) => Promise<number>;
     getUserById: (id: number) => Promise<U<User>>;
     getUserByUsername: (username: string) => Promise<U<User>>;
-    createUser: (user: User) => Promise<User>;
-    getBaseWordPairs: (user: UserWithoutPassword) => Promise<Array<BaseWordPairDTO>>;
-    getWord: (wordId: number, user: UserWithoutPassword) => Promise<ExtendedWordDTO>;
+    createUser: (user: User) => Promise<UserDTO>;
+    getBaseWordPairs: (user: UserDTO) => Promise<Array<BaseWordPairDTO>>;
+    getWord: (wordId: number, user: UserDTO) => Promise<ExtendedWordDTO>;
+    updateDifficulties: (difficultyDTO: Array<DifficultyDTO>, user: UserDTO) => Promise<void>;
+    updateGroup: (difficultyDTO: GroupDTO, user: UserDTO) => Promise<void>
 };
 
 export interface CookieObject {

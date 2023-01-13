@@ -1,7 +1,7 @@
-import { User } from "../../../types";
+import { User, UserDTO } from "../../../types";
 import sql, { ConnectionPool, IProcedureResult, Transaction } from "mssql";
 
-export const createUser = async (user: User, pool: ConnectionPool): Promise<User> => {
+export const createUser = async (user: User, pool: ConnectionPool): Promise<UserDTO> => {
     const transaction: Transaction = await pool.transaction().begin();
 
     const userResult: IProcedureResult<User> = await transaction.request()
@@ -10,7 +10,7 @@ export const createUser = async (user: User, pool: ConnectionPool): Promise<User
     .input("role", sql.NVarChar(20), user.role)
     .execute("create_user");
 
-    const newUser: User = userResult.recordset[0];
+    const newUser: UserDTO = userResult.recordset[0];
 
     await transaction.commit()
 

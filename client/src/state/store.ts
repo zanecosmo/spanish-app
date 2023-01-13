@@ -3,6 +3,7 @@ import produce from "immer";
 import { Store } from "../types";
 import { loginFormSlice } from "../state/slices/login-slice";
 import { createAccountFormSlice } from "../state/slices/create-account-slice";
+import { appSlice } from "./slices/app-slice";
 
 export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get) => ({
     user: null,
@@ -11,6 +12,9 @@ export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get)
     },
     createAccountForm: {
         ...createAccountFormSlice(set, get)
+    },
+    app: {
+        ...appSlice(set, get)
     },
     clearForm: () => {
         set(produce((state: Store) => {

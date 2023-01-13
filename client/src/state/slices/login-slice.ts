@@ -55,19 +55,22 @@ export const loginFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): 
             role: Roles.USER
         };
     
-        const request = {
+        // const request = ;
+    
+        // make and handle request
+        const response = await fetch("http://localhost:8000/login", {
             method: "POST",
             headers: {
                 "Accept": "application/json, text/plain, */*",
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify(user)
-        };
-    
-        // make and handle request
-        const response = await fetch("http://localhost:8000/login", request);
+        });
+        console.log(document.cookie);
+        
         const body = await response.json();
-    
+        
         if (response.status !== 200) {
             console.log(response.status);
             set(produce((state: Store) => {
@@ -75,6 +78,7 @@ export const loginFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): 
             }));
             return;
         };
+        console.log(document.cookie);
 
         set(produce((state: Store) => {
             state.user = body.user;

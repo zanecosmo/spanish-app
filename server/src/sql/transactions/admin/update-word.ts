@@ -1,11 +1,11 @@
 import sql, { ConnectionPool, Transaction } from "mssql";
-import { Word } from "../../../types";
+import { Word, WordPair } from "../../../types";
 
 export const updateWord = async (word: Word, pool: ConnectionPool): Promise<number> => {
     const transaction: Transaction = await pool.transaction().begin();
 
     while (word.wordPairs.length > 0) {
-        const wordPair = word.wordPairs.pop();
+        const wordPair: WordPair | undefined = word.wordPairs.pop();
         if (!wordPair) break;
         await transaction.request()
         .input("english", sql.NVarChar(50), wordPair.english)

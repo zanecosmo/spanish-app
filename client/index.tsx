@@ -4,12 +4,14 @@ import { App } from "./src/app";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ErrorPage } from "./src/pages/error-page";
 import { LoginPage } from "./src/pages/login-page";
+import { useStore } from "./src/state/store";
+import { Store } from "./src/types";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <App />,
-        errorElement: <ErrorPage />,
+        errorElement: <ErrorPage />
     },
     {
         path: "/login",
@@ -21,6 +23,6 @@ const router = createBrowserRouter([
 const root = createRoot(document.getElementById("root")!);
 root.render(
     <StrictMode>
-        <RouterProvider router={router} />
+        <RouterProvider router={router}/>
     </StrictMode>
 );
