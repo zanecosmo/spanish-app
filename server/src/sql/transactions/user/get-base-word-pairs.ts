@@ -11,7 +11,6 @@ export const getBaseWordPairs = async (
     .input("user_id", sql.Int, user.id)
     .execute("get_base_word_pairs");
 
-    // something like that. maybe recordset, or some other value
     const baseWordPairs: Array<BaseWordPairDTO> = getBaseWordsResult.recordset;
 
     transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE"));

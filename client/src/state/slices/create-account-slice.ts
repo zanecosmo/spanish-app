@@ -1,14 +1,15 @@
 import produce from "immer";
 import {
     CreateAccountFormSlice,
+    ResponseBody,
     Roles,
     Store,
     User,
-    ValidatedInput,
+    UserWithoutPassword,
     ZustandGet,
     ZustandSet
 } from "../../types";
-import { validateInput } from "../../utils";
+import { executeFetch, validateInput } from "../../utils";
 
 export const createAccountFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): CreateAccountFormSlice => ({
     username: {
@@ -35,49 +36,35 @@ export const createAccountFormSlice = (set: ZustandSet<Store>, get: ZustandGet<S
     attemptCreateAccount: async () => {
         // validate logic and set messages to be rendered by react + zustand
         set(produce((state: Store) => {
-            const form: { username: ValidatedInput, password: ValidatedInput } = state.createAccountForm;
-            form.username.validationMessage = validateInput(form.username.value, "username");
-            form.password.validationMessage = validateInput(form.password.value, "password");
+            const { username, password }: CreateAccountFormSlice = state.createAccountForm;
+            username.validationMessage = validateInput(username.value, "username");
+            password.validationMessage = validateInput(password.value, "password");
         }));
 
         const { username, password } = get().createAccountForm;
+
         if (username.validationMessage !== null || password.validationMessage !== null) return;
 
-        set(produce((state: Store) => {
-            state.createAccountForm.responseMessage = null;
-        }));
+        set(produce((state: Store) => void (state.createAccountForm.responseMessage = null)));
 
-        // build fetch request
-        const user: User = {
+        // make, execute, and handle request
+        const newUser: User = {
             id: undefined,
-            username: get().createAccountForm.username.value,
-            password: get().createAccountForm.password.value,
+            username: username.value,
+            password: password.value,
             role: Roles.USER
         };
-    
-        const request = {
-            method: "POST",
-            headers: {
-                "Accept": "application/json, text/plain, */*",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(user)
-        };
 
-        // make and handle request
-        const response = await fetch("http://localhost:8000/create-account", request);
-        const body = await response.json();
+        const url = "http://localhost:8000/create-account"
+        const response: Response = await executeFetch("POST", url, newUser);
+        const { data: user, message }: ResponseBody<UserWithoutPassword> = await response.json();
     
-        if (response.status !== 200) {
-            set(produce((state: Store) => {
-                state.createAccountForm.responseMessage = body.message;
-            }));
+        if (!([200, 201, 204].includes(response.status)) || !user) {
+            set(produce((state: Store) => void (state.createAccountForm.responseMessage = message)));
             return;
         };
 
-        set(produce((state: Store) => {
-            state.user = body.user;
-        }));
+        set(produce((state: Store) => void (state.user = user)));
 
         get().clearForm();
     }

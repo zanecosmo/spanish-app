@@ -34,6 +34,12 @@ export interface User {
     role: Roles;
 };
 
+export interface ResponseBody<T> {
+    error: string | null;
+    message: string | null;
+    data: T | null;
+};
+
 export interface UserDTO {
     id: number | undefined;
     username: string;

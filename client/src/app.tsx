@@ -2,11 +2,7 @@ import React, { FC, useEffect } from "react";
 import { Button, ButtonProps} from "./components/button";
 import { LoginPage } from "./pages/login-page";
 import { useStore } from "./state/store";
-import { BaseWordPairDTO, ExtendedWordDTO, ExtendedWordPairDTO, GrammaticalNumber, Store, UserWithoutPassword } from "./types";
-
-interface DashboardProps {
-    user: UserWithoutPassword;
-};
+import { BaseWordPairDTO, ExtendedWordPairDTO, GrammaticalNumber, Store, UserWithoutPassword } from "./types";
 
 const BaseWordListView: FC = () => {
     const { getWord, wordList } = useStore((state: Store) => state.app);
@@ -87,7 +83,8 @@ const ExpandedWordView: FC = () => {
     );
 };
 
-const Dashboard: FC<DashboardProps> = (props: DashboardProps): JSX.Element => {
+const Dashboard: FC = (): JSX.Element => {
+    const user = useStore((state: Store) => state.user);
     const { getBaseWordPairs, selectedWord } = useStore((state: Store) => state.app);
     
     useEffect(() => void getBaseWordPairs(), []);
@@ -100,7 +97,7 @@ const Dashboard: FC<DashboardProps> = (props: DashboardProps): JSX.Element => {
 
     return (
         <div>
-            {`Welcome to the app, ${props.user.username}`}
+            {`Welcome to the app, ${user!.username}`}
             <Button {...logoutButtonProps}/>
             {selectedWord ? <ExpandedWordView /> : <BaseWordListView />}
         </div>
@@ -113,7 +110,7 @@ export const App: FC = (): JSX.Element => {
     const user: UserWithoutPassword | null = useStore((state: Store) => state.user);
     // const getBaseWordPairs = useStore((state: Store) => state.app.getBaseWordPairs);
     
-    return !user ? <LoginPage /> : <Dashboard user={user}/>;
+    return !user ? <LoginPage /> : <Dashboard />;
 
     // const getData = async () => await getBaseWordPairs();
 

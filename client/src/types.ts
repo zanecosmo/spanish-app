@@ -109,3 +109,9 @@ export enum GrammaticalNumber {
     SINGULAR = "singular",
     PLURAL = "plural"
 };
+
+export interface ResponseBody<T> {
+    error: string | null;
+    message: string | null;
+    data: T | null;
+};

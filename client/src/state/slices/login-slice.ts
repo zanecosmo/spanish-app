@@ -1,14 +1,15 @@
 import {
     Roles,
     User,
-    ValidatedInput,
     Store,
     LoginFormSlice,
     ZustandGet,
-    ZustandSet
+    ZustandSet,
+    UserWithoutPassword,
+    ResponseBody
 } from "../../types";
 import produce from "immer";
-import { validateInput } from "../../utils";
+import { executeFetch, validateInput } from "../../utils";
 
 export const loginFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): LoginFormSlice => ({
     username: {
@@ -35,54 +36,33 @@ export const loginFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): 
     attemptLogin: async () => {
         // validate logic and set messages to be rendered by react + zustand
         set(produce((state: Store) => {
-            const form: { username: ValidatedInput, password: ValidatedInput } = state.loginForm;
-            form.username.validationMessage = validateInput(form.username.value, "username");
-            form.password.validationMessage = validateInput(form.password.value, "password");
+            const { username, password }: LoginFormSlice = state.loginForm;
+            username.validationMessage = validateInput(username.value, "username");
+            password.validationMessage = validateInput(password.value, "password");
         }));
 
         const { username, password } = get().loginForm;
         if (username.validationMessage !== null || password.validationMessage !== null) return;
 
-        set(produce((state: Store) => {
-            state.loginForm.responseMessage = null;
-        }));
+        set(produce((state: Store) => void (state.loginForm.responseMessage = null)));
 
-        // build fetch request
-        const user: User = {
+        // make, execute, and handle request
+        const userLoggingIn: User = {
             id: undefined,
-            username: get().loginForm.username.value,
-            password: get().loginForm.password.value,
+            username: username.value,
+            password: password.value,
             role: Roles.USER
         };
     
-        // const request = ;
-    
-        // make and handle request
-        const response = await fetch("http://localhost:8000/login", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json, text/plain, */*",
-                "Content-Type": "application/json"
-            },
-            credentials: "include",
-            body: JSON.stringify(user)
-        });
-        console.log(document.cookie);
+        const response: Response = await executeFetch("POST", "http://localhost:8000/login", userLoggingIn);        
+        const { data: user, message }: ResponseBody<UserWithoutPassword> = await response.json();
         
-        const body = await response.json();
-        
-        if (response.status !== 200) {
-            console.log(response.status);
-            set(produce((state: Store) => {
-                state.loginForm.responseMessage = body.message;
-            }));
+        if (response.status !== 200 || !user) {
+            set(produce((state: Store) => void (state.loginForm.responseMessage = message)));
             return;
         };
-        console.log(document.cookie);
 
-        set(produce((state: Store) => {
-            state.user = body.user;
-        }));
+        set(produce((state: Store) => void (state.user = user)));
 
         get().clearForm();
     }

@@ -3,6 +3,7 @@ import { Database, UserDTO, Roles, TypedRequestBody, User } from "../types";
 import jwt from "jsonwebtoken";
 import  bcrypt from "bcrypt";
 import dotenv from "dotenv";
+import { buildResponseBody, DestructureError } from "../utils";
 
 dotenv.config();
 
@@ -11,10 +12,19 @@ export const enableAuthRoutes = (app: Express, database: Database): void => {
 
     router.post("/create-account", async (req: TypedRequestBody<User>, res: Response): Promise<void> => {
         try {
-            const { username, password } = req.body;
+            const { username, password, role } = req.body;
+
+            if (role !== Roles.USER) {
+                res.status(401).send(
+                    buildResponseBody(null, "NONE", "Cannot create admin account without permission")
+                );
+                return;
+            };
     
             if (await database.getUserByUsername(username)) {
-                res.status(403).send({ success: false, message: `Account already exists with username "${username}"` });
+                res.status(403).send(
+                    buildResponseBody(null, "NONE", `Account already exists with username "${username}"`)
+                );
                 return;
             };
         
@@ -33,10 +43,11 @@ export const enableAuthRoutes = (app: Express, database: Database): void => {
             res
             .status(200)
             .cookie("jwt", token, { httpOnly: true })
-            .send({ success: true, user: user });
+            .send(buildResponseBody(user));
         }
         catch (error) {
-            res.status(500).send({ error: error });
+            const { name, message } = DestructureError(error);
+            res.status(500).send(buildResponseBody(null, name, message));
         };
     });
 
@@ -47,14 +58,16 @@ export const enableAuthRoutes = (app: Express, database: Database): void => {
             const user: User | undefined = await database.getUserByUsername(username);
 
             if (!user) {
-                res.status(403).send({ success: false, message: `There is no account with "${username}" username` });
+                res.status(403).send(
+                    buildResponseBody(null, "NONE", `There is no account with "${username}" username`)
+                );
                 return;
             };
 
             const passwordsDoMatch = await bcrypt.compare(password, user.password);
 
             if (!passwordsDoMatch) {
-                res.status(403).send({ success: false, message: "Incorrect password" });
+                res.status(403).send(buildResponseBody(null, "NONE", "Incorrect password"));
                 return;
             };
             
@@ -69,10 +82,11 @@ export const enableAuthRoutes = (app: Express, database: Database): void => {
             res
             .status(200)
             .cookie("jwt", token, { httpOnly: false })
-            .send({ success: true, user: responseUser });
+            .send(buildResponseBody(responseUser));
         }
         catch (error) {
-            res.status(500).send({ error: error });
+            const { name, message } = DestructureError(error);
+            res.status(500).send(buildResponseBody(null, name, message));
         };
     });
 
