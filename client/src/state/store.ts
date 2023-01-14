@@ -1,12 +1,13 @@
 import create, { StoreApi, UseBoundStore } from "zustand";
 import produce from "immer";
-import { Store } from "../types";
+import { Store, UserWithoutPassword } from "../types";
 import { loginFormSlice } from "../state/slices/login-slice";
 import { createAccountFormSlice } from "../state/slices/create-account-slice";
 import { appSlice } from "./slices/app-slice";
 
 export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get) => ({
     user: null,
+    setUser: (user: UserWithoutPassword) => set(produce((state: Store) => void (state.user = user))),
     loginForm: {
         ...loginFormSlice(set, get)
     },
@@ -18,11 +19,11 @@ export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get)
     },
     clearForm: () => {
         set(produce((state: Store) => {
-            state.loginForm.username.value = "";
-            state.loginForm.password.value = "";
+            state.loginForm.usernameState.username = "";
+            state.loginForm.passwordState.password = "";
             state.loginForm.responseMessage = null;
-            state.loginForm.username.validationMessage = null;
-            state.loginForm.password.validationMessage = null;
+            state.loginForm.usernameValidationMessage = null;
+            state.loginForm.passwordValidationMessage = null;
 
             state.createAccountForm.username.value = "";
             state.createAccountForm.password.value = "";
@@ -49,8 +50,6 @@ export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get)
             return;
         };
 
-        set(produce((state: Store) => {
-            state.user = null;
-        }));
+        set(produce((state: Store) => void (state.user = null)));
     }
 }));

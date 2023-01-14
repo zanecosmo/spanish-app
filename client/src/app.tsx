@@ -110,6 +110,7 @@ export const App: FC = (): JSX.Element => {
     const user: UserWithoutPassword | null = useStore((state: Store) => state.user);
     // const getBaseWordPairs = useStore((state: Store) => state.app.getBaseWordPairs);
     
+    // return <div>ROOT HELLO</div>
     return !user ? <LoginPage /> : <Dashboard />;
 
     // const getData = async () => await getBaseWordPairs();

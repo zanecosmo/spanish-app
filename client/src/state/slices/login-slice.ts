@@ -10,47 +10,45 @@ import {
 } from "../../types";
 import produce from "immer";
 import { executeFetch, validateInput } from "../../utils";
+import { FormEvent } from "react";
 
 export const loginFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): LoginFormSlice => ({
-    username: {
-        value: "",
-        update: (newValue: string) => {
-            set(produce((state: Store) => {
-                    state.loginForm.username.value = newValue
-                })
-            );
-        },
-        validationMessage: null
+    usernameState: {
+        username: "",
+        setUsername: (username: string) => set(produce((state: Store) => {
+            state.loginForm.usernameState.username = username
+        })),
     },
-    password: {
-        value: "",
-        update: (newValue: string) => {
-            set(produce((state: Store) => {
-                    state.loginForm.password.value = newValue
-                })
-            )
-        },
-        validationMessage: null
+    usernameValidationMessage: null,
+    passwordState: {
+        password: "",
+        setPassword: (password: string) => set(produce((state: Store) => {
+            state.loginForm.passwordState.password = password
+        })),
     },
+    passwordValidationMessage: null,
     responseMessage: null,
-    attemptLogin: async () => {
+    attemptLogin: async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        
         // validate logic and set messages to be rendered by react + zustand
-        set(produce((state: Store) => {
-            const { username, password }: LoginFormSlice = state.loginForm;
-            username.validationMessage = validateInput(username.value, "username");
-            password.validationMessage = validateInput(password.value, "password");
-        }));
+        const { username } = get().loginForm.usernameState;
+        const { password } = get().loginForm.passwordState;
+        const usernameMessage = validateInput(username, "username");
+        const passwordMessage = validateInput(password, "password");
 
-        const { username, password } = get().loginForm;
-        if (username.validationMessage !== null || password.validationMessage !== null) return;
+        if (usernameMessage|| passwordMessage) return set(produce((state: Store) => {
+            state.loginForm.usernameValidationMessage = usernameMessage;
+            state.loginForm.passwordValidationMessage = passwordMessage;
+        }));
 
         set(produce((state: Store) => void (state.loginForm.responseMessage = null)));
 
         // make, execute, and handle request
         const userLoggingIn: User = {
             id: undefined,
-            username: username.value,
-            password: password.value,
+            username: username,
+            password: password,
             role: Roles.USER
         };
     

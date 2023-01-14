@@ -1,3 +1,5 @@
+import { FormEvent } from "react";
+
 export enum Roles {
     ADMIN = "ADMIN",
     USER = "USER"
@@ -30,10 +32,18 @@ export type ZustandSet<T> = (
 export type ZustandGet<T> = () => T;
 
 export interface LoginFormSlice {
-    username: ValidatedInput,
-    password: ValidatedInput,
+    usernameState: {
+        username: string,
+        setUsername: (username: string) => void;
+    };
+    usernameValidationMessage: string | null;
+    passwordState: {
+        password: string,
+        setPassword: (password: string) => void;
+    };
+    passwordValidationMessage: string | null;
     responseMessage: string | null;
-    attemptLogin: () => Promise<void>;
+    attemptLogin: (event: FormEvent<HTMLFormElement>) => Promise<void>;
 };
 
 export interface CreateAccountFormSlice {
@@ -52,6 +62,7 @@ export interface AppSlice {
 
 export interface Store {
     user: UserWithoutPassword | null;
+    setUser: (user: UserWithoutPassword) => void;
     loginForm: LoginFormSlice;
     createAccountForm: CreateAccountFormSlice;
     clearForm: () => void;
