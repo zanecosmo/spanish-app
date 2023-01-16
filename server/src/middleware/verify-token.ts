@@ -6,11 +6,15 @@ import { extractCookies } from "../utils";
 dotenv.config();
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
+    console.log("REQUEST INCOMING");
+
     if (req.body.user) {
         res.status(401).send({ success: false, message: "BODY ALREADY CONTAINS USER, JWT INVALID" });
+        return;
     };
 
     const cookie = req.headers.cookie;
+    console.log(cookie);
 
     if (!cookie) {
         res.status(401).send({ success: false, message: "NO COOKIE" });

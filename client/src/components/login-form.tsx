@@ -1,20 +1,19 @@
-import React, { FC, FormEvent } from "react";
+import React, { FC } from "react";
 import { useStore } from "../state/store";
-import { Input, InputProps } from "./text-input";
-import { Button, ButtonProps } from "./button";
 import { Store } from "../types";
+import styles from "../styles/Styles.module.css";
 
 export const LoginForm: FC = (): JSX.Element => {
-    const { username, setUsername } = useStore((state: Store) => state.loginForm.usernameState);
-    const { password, setPassword } = useStore((state: Store) => state.loginForm.passwordState);
+    const { username, setUsername } = useStore((state: Store) => state.loginForm);
+    const { password, setPassword } = useStore((state: Store) => state.loginForm);
     const usernameValidationMessage = useStore((state: Store) => state.loginForm.usernameValidationMessage);
     const passwordValidationMessage = useStore((state: Store) => state.loginForm.passwordValidationMessage);
     const responseMessage: string | null = useStore((state: Store) => state.loginForm.responseMessage);
-    const attemptLogin = useStore((state: Store) => state.loginForm.attemptLogin)
+    const attemptLogin = useStore((state: Store) => state.loginForm.attemptLogin);
 
     return (
-        <form onSubmit={attemptLogin} className="entry-form">
-            <label htmlFor="username" className="input-name">Username</label>
+        <form onSubmit={attemptLogin} className={styles["entry-form"]}>
+            <label htmlFor="username" className={styles["input-name"]}>Username</label>
             <input
                 type="text"
                 id="username"
@@ -22,10 +21,10 @@ export const LoginForm: FC = (): JSX.Element => {
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="username login"
+                className={styles["username login"]}
             />
-            <div className="validation-message">{usernameValidationMessage}</div>
-            <label htmlFor="password" className="input-name">Password</label>
+            <div className={styles["validation-message"]}>{usernameValidationMessage}</div>
+            <label htmlFor="password" className={styles["input-name"]}>Password</label>
             <input
                 type="password"
                 id="password"
@@ -33,11 +32,11 @@ export const LoginForm: FC = (): JSX.Element => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="password login"
+                className={styles["password login"]}
             />
-            <div className="validation-message">{passwordValidationMessage}</div>
-            <button type="submit" className="submit-button login">LOGIN</button>
-            <div className="response-message">{responseMessage}</div>
+            <div className={styles["validation-message"]}>{passwordValidationMessage}</div>
+            <button type="submit" className={styles["submit-button login"]}>LOGIN</button>
+            <div className={styles["response-message"]}>{responseMessage}</div>
         </form>
     );
 };

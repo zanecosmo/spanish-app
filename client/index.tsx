@@ -1,34 +1,20 @@
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./src/app";
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ErrorPage } from "./src/pages/error-page";
-import { LoginPage } from "./src/pages/login-page";
-
-const JSXRouter = createBrowserRouter(createRoutesFromElements(
-    <>
-        <Route element={<App />} path="/" errorElement={<ErrorPage />} />
-        <Route element={<LoginPage />} path="/login" errorElement={<ErrorPage />} />
-    </>
-))
+import { TestRoot } from "./src/components/router-tests/test-root";
+import { TestNonRoot } from "./src/components/router-tests/test-non-root";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <App />,
+        element: <TestRoot />,
         errorElement: <ErrorPage />,
-        // loader: () => redirect("login"),
-        // action: async ({ request }) => {
-        //     // const formData = await request.formData();
-        //     // for (const entry of formData) {
-        //     //     console.log(entry)
-        //     // };
-        //     // request.
-        // }
     },
     {
-        path: "/login",
-        element: <LoginPage />,
+        path: "non-root",
+        element: <TestNonRoot />,
         errorElement: <ErrorPage />
         
     },
@@ -37,6 +23,7 @@ const router = createBrowserRouter([
 const root = createRoot(document.getElementById("root")!);
 root.render(
     <StrictMode>
-        <RouterProvider router={JSXRouter}/>
+        <App />
+        {/* <RouterProvider router={router}/> */}
     </StrictMode>
 );

@@ -6,6 +6,7 @@ import { verifyToken } from "./middleware/verify-token";
 import { enableAdminRoutes } from "./routes/word-admin-router";
 import cors from "cors";
 import { enableUserRouter } from "./routes/user-router";
+import { nextTick } from "process";
 // import { verb } from "./test-verb";
 
 dotenv.config();

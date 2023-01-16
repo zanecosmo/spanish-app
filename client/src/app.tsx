@@ -108,8 +108,11 @@ export const App: FC = (): JSX.Element => {
     
 
     const user: UserWithoutPassword | null = useStore((state: Store) => state.user);
+    const attemptLoginWithJWT = useStore((state: Store) => state.attemptLoginWithJWT);
     // const getBaseWordPairs = useStore((state: Store) => state.app.getBaseWordPairs);
     
+    useEffect(() => void attemptLoginWithJWT(), [])
+
     // return <div>ROOT HELLO</div>
     return !user ? <LoginPage /> : <Dashboard />;
 

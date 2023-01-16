@@ -32,15 +32,11 @@ export type ZustandSet<T> = (
 export type ZustandGet<T> = () => T;
 
 export interface LoginFormSlice {
-    usernameState: {
-        username: string,
-        setUsername: (username: string) => void;
-    };
+    username: string,
+    setUsername: (username: string) => void;
     usernameValidationMessage: string | null;
-    passwordState: {
-        password: string,
-        setPassword: (password: string) => void;
-    };
+    password: string,
+    setPassword: (password: string) => void;
     passwordValidationMessage: string | null;
     responseMessage: string | null;
     attemptLogin: (event: FormEvent<HTMLFormElement>) => Promise<void>;
@@ -68,6 +64,7 @@ export interface Store {
     clearForm: () => void;
     attemptLogout: () => Promise<void>;
     app: AppSlice;
+    attemptLoginWithJWT: () => Promise<void>;
     // testGetWord: () => Promise<void>
 };
 

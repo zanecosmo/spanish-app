@@ -11,33 +11,30 @@ import {
 import produce from "immer";
 import { executeFetch, validateInput } from "../../utils";
 import { FormEvent } from "react";
+import { LoginForm } from "../../components/login-form";
 
 export const loginFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): LoginFormSlice => ({
-    usernameState: {
-        username: "",
-        setUsername: (username: string) => set(produce((state: Store) => {
-            state.loginForm.usernameState.username = username
-        })),
-    },
+    username: "",
+    setUsername: (username: string) => set(produce((state: Store) => {
+        state.loginForm.username = username
+    })),
     usernameValidationMessage: null,
-    passwordState: {
-        password: "",
-        setPassword: (password: string) => set(produce((state: Store) => {
-            state.loginForm.passwordState.password = password
-        })),
-    },
+    password: "",
+    setPassword: (password: string) => set(produce((state: Store) => {
+        state.loginForm.password = password
+    })),
     passwordValidationMessage: null,
     responseMessage: null,
     attemptLogin: async (event: FormEvent<HTMLFormElement>) => {
+        console.log("clocked");
         event.preventDefault();
         
         // validate logic and set messages to be rendered by react + zustand
-        const { username } = get().loginForm.usernameState;
-        const { password } = get().loginForm.passwordState;
+        const { username, password } = get().loginForm;
         const usernameMessage = validateInput(username, "username");
         const passwordMessage = validateInput(password, "password");
 
-        if (usernameMessage|| passwordMessage) return set(produce((state: Store) => {
+        if (usernameMessage || passwordMessage) return set(produce((state: Store) => {
             state.loginForm.usernameValidationMessage = usernameMessage;
             state.loginForm.passwordValidationMessage = passwordMessage;
         }));
@@ -54,13 +51,13 @@ export const loginFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): 
     
         const response: Response = await executeFetch("POST", "http://localhost:8000/login", userLoggingIn);        
         const { data: user, message }: ResponseBody<UserWithoutPassword> = await response.json();
-        
+
         if (response.status !== 200 || !user) {
             set(produce((state: Store) => void (state.loginForm.responseMessage = message)));
             return;
         };
 
-        set(produce((state: Store) => void (state.user = user)));
+        set((state: Store) => ({ ...state, user: user }));
 
         get().clearForm();
     }

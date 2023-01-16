@@ -1,9 +1,10 @@
 import create, { StoreApi, UseBoundStore } from "zustand";
 import produce from "immer";
-import { Store, UserWithoutPassword } from "../types";
+import { ResponseBody, Store, UserWithoutPassword } from "../types";
 import { loginFormSlice } from "../state/slices/login-slice";
 import { createAccountFormSlice } from "../state/slices/create-account-slice";
 import { appSlice } from "./slices/app-slice";
+import { executeFetch } from "../utils";
 
 export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get) => ({
     user: null,
@@ -19,8 +20,8 @@ export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get)
     },
     clearForm: () => {
         set(produce((state: Store) => {
-            state.loginForm.usernameState.username = "";
-            state.loginForm.passwordState.password = "";
+            state.loginForm.username = "";
+            state.loginForm.password = "";
             state.loginForm.responseMessage = null;
             state.loginForm.usernameValidationMessage = null;
             state.loginForm.passwordValidationMessage = null;
@@ -32,24 +33,23 @@ export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get)
             state.createAccountForm.password.validationMessage = null;
         }));
     },
-    attemptLogout: async () => {
-        const jsonMessage = {
-            method: "POST",
-            headers: {
-                "Accept": "application/json, text/plain, */*",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ data: null })
-        };
-    
-        const response = await fetch("http://localhost:8000/logout", jsonMessage);
+    attemptLogout: async () => {    
+        const response = await executeFetch("POST", "http://localhost:8000/logout");
         const body = await response.json();
     
+        if (response.status === 401) return console.log(body.message);
+
+        set((state: Store) => ({ ...state, user: null }));
+    },
+    attemptLoginWithJWT: async () => {
+        const response = await executeFetch("GET", "http://localhost:8000/login-with-jwt");
+        const { data: user, message }: ResponseBody<UserWithoutPassword> = await response.json();
+
         if (response.status === 401) {
-            console.log(body.message);
+            console.log(message);
             return;
         };
 
-        set(produce((state: Store) => void (state.user = null)));
+        set((state: Store) => ({ ...state, user: user }));
     }
 }));
