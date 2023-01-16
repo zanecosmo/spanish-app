@@ -14,7 +14,7 @@ export const updateWord = async (word: Word, pool: ConnectionPool): Promise<numb
         .execute("update_word_pair");
     };
 
-    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE"));
+    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE: update_word_pair"));
 
     return word.id!;
 };

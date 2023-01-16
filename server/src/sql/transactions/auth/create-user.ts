@@ -12,7 +12,7 @@ export const createUser = async (user: User, pool: ConnectionPool): Promise<User
 
     const newUser: UserDTO = userResult.recordset[0];
 
-    await transaction.commit()
+    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE: create_user"));
 
     return newUser;
 };

@@ -25,7 +25,7 @@ export const insertWord = async (word: Word, pool: ConnectionPool): Promise<numb
         .execute("build_pairs");
     };
 
-    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE"));
+    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE: create_base_word + build_pairs"));
 
     return parentId;
 };

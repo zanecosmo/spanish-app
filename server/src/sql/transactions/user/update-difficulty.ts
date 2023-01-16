@@ -18,6 +18,6 @@ export const updateDifficulties = async (
         .execute("update_or_create_difficulty");
     };
 
-    transaction.commit(err => err ? err : console.log("TRANSACTION COMPLETE"));
+    transaction.commit(err => err ? err : console.log("TRANSACTION COMPLETE: update_or_create_difficulty"));
 };
 

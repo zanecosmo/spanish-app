@@ -14,5 +14,5 @@ export const updateGroup = async (
     .input("user_id", sql.Int, user.id)
     .execute("update_group");
 
-    transaction.commit(err => err ? err : console.log("TRANSACTION COMPLETE"));
+    transaction.commit(err => err ? err : console.log("TRANSACTION COMPLETE: update_group"));
 };

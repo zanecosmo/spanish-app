@@ -8,7 +8,7 @@ export const getUserById = async (id: number, pool: ConnectionPool): Promise<U<U
     .input("id", sql.Int, id)
     .execute("get_user_by_id");
 
-    await transaction.commit();
+    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE: get_user_by_id"));
     
     return userResult.recordset[0];
 };

@@ -7,5 +7,5 @@ export const deleteWord = async (parentId: number, pool: ConnectionPool): Promis
     .input("parent_id", sql.Int, parentId)
     .execute("delete_word");
 
-    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE"));
+    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE: delete_word"));
 };

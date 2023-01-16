@@ -13,7 +13,7 @@ export const getBaseWordPairs = async (
 
     const baseWordPairs: Array<BaseWordPairDTO> = getBaseWordsResult.recordset;
 
-    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE"));
+    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE: get_base_word_pairs"));
 
     return baseWordPairs;
 };

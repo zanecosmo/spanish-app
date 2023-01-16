@@ -19,7 +19,7 @@ export const getWord = async (
         wordPairs: getWordResult.recordset
     };
 
-    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE"));
+    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE: get_word"));
 
     return extendedWordDTO;
 };
