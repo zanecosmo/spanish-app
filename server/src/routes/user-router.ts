@@ -1,5 +1,5 @@
 import { Express, Router, Request, Response } from "express";
-import { BaseWordPairDTO, Database, ExtendedWordDTO } from "../types";
+import { BaseWordPairDTO, Database, ExtendedWordDTO, GroupDTO, WordsPayload } from "../types";
 import { buildResponseBody, DestructureError } from "../utils";
 
 export const enableUserRouter = (app: Express, database: Database): void => {
@@ -7,8 +7,8 @@ export const enableUserRouter = (app: Express, database: Database): void => {
 
     router.get("/get-word-pairs", async (req: Request, res: Response): Promise<void> => {
         try {
-            const baseWordPairDTOs: Array<BaseWordPairDTO> = await database.getBaseWordPairs(req.body.user);
-            res.status(200).send(buildResponseBody(baseWordPairDTOs));
+            const wordsPayload: WordsPayload = await database.getBaseWordPairs(req.body.user);
+            res.status(200).send(buildResponseBody(wordsPayload));
         }
         catch (error) {
             const { name, message } = DestructureError(error);
@@ -40,8 +40,11 @@ export const enableUserRouter = (app: Express, database: Database): void => {
     
     router.put("/update-group", async (req: Request, res: Response): Promise<void> => {
         try {
-            await database.updateGroup(req.body.group, req.body.user);
-            res.status(200).send(buildResponseBody(null));
+            const { group, parentWordId } = req.body;
+            const groupDTO: GroupDTO = { group: group, parentWordId: parentWordId };
+
+            const newGroup = await database.updateGroup(groupDTO, req.body.user);
+            res.status(200).send(buildResponseBody(newGroup));
         }
         catch (error) {
             const { name, message } = DestructureError(error);

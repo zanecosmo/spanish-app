@@ -1,5 +1,4 @@
 import {
-    BaseWordPairDTO,
     Database,
     DifficultyDTO,
     ExtendedWordDTO,
@@ -7,7 +6,8 @@ import {
     U,
     User,
     UserDTO,
-    Word
+    Word,
+    WordsPayload
 } from "../../types";
 import { insertWord } from "../transactions/admin/create-word";
 import { deleteWord } from "../transactions/admin/delete-word";
@@ -39,7 +39,7 @@ export const database: Database = {
     getUserById: async (id: number): Promise<U<User>> => await getUserById(id, pool),
     getUserByUsername: async (username: string): Promise<U<User>> => await getUserByUsername(username, pool),
     createUser: async (user: User): Promise<UserDTO> => await createUser(user, pool),
-    getBaseWordPairs: async (user: UserDTO): Promise<Array<BaseWordPairDTO>> => {
+    getBaseWordPairs: async (user: UserDTO): Promise<WordsPayload> => {
         return await getBaseWordPairs(user, pool);
     },
     getWord: async (wordId: number, user: UserDTO): Promise<ExtendedWordDTO> => {
@@ -48,7 +48,7 @@ export const database: Database = {
     updateDifficulties: async (difficultyDTOs: Array<DifficultyDTO>, user: UserDTO): Promise<void> => {
         return await updateDifficulties(difficultyDTOs, user, pool);
     },
-    updateGroup: async (groupDTO: GroupDTO, user: UserDTO): Promise<void> => {
+    updateGroup: async (groupDTO: GroupDTO, user: UserDTO): Promise<Array<string>> => {
         return await updateGroup(groupDTO, user, pool);
     }
 };

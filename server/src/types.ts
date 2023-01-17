@@ -56,6 +56,11 @@ export interface BaseWordPairDTO {
     difficulty: number | null;
 };
 
+export interface WordsPayload {
+    wordList: Array<BaseWordPairDTO>;
+    groups: Array<string>;
+};
+
 export interface ExtendedWordPairDTO extends GrammaticalInfo {
     id: number;
     parentId: number;
@@ -92,10 +97,10 @@ export interface Database {
     getUserById: (id: number) => Promise<U<User>>;
     getUserByUsername: (username: string) => Promise<U<User>>;
     createUser: (user: User) => Promise<UserDTO>;
-    getBaseWordPairs: (user: UserDTO) => Promise<Array<BaseWordPairDTO>>;
+    getBaseWordPairs: (user: UserDTO) => Promise<WordsPayload>;
     getWord: (wordId: number, user: UserDTO) => Promise<ExtendedWordDTO>;
     updateDifficulties: (difficultyDTO: Array<DifficultyDTO>, user: UserDTO) => Promise<void>;
-    updateGroup: (difficultyDTO: GroupDTO, user: UserDTO) => Promise<void>
+    updateGroup: (difficultyDTO: GroupDTO, user: UserDTO) => Promise<Array<string>>
 };
 
 export interface CookieObject {
