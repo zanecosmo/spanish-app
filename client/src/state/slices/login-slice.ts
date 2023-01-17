@@ -16,17 +16,16 @@ import { LoginForm } from "../../components/login-form";
 export const loginFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): LoginFormSlice => ({
     username: "",
     setUsername: (username: string) => set(produce((state: Store) => {
-        state.loginForm.username = username
+        state.loginForm.username = username;
     })),
     usernameValidationMessage: null,
     password: "",
     setPassword: (password: string) => set(produce((state: Store) => {
-        state.loginForm.password = password
+        state.loginForm.password = password;
     })),
     passwordValidationMessage: null,
     responseMessage: null,
     attemptLogin: async (event: FormEvent<HTMLFormElement>) => {
-        console.log("clocked");
         event.preventDefault();
         
         // validate logic and set messages to be rendered by react + zustand

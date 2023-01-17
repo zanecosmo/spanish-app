@@ -1,4 +1,5 @@
 import produce from "immer";
+import { FormEvent } from "react";
 import {
     CreateAccountFormSlice,
     ResponseBody,
@@ -12,51 +13,41 @@ import {
 import { executeFetch, validateInput } from "../../utils";
 
 export const createAccountFormSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): CreateAccountFormSlice => ({
-    username: {
-        value: "",
-        update: (newValue: string) => {
-            set(produce((store: Store) => {
-                    store.createAccountForm.username.value = newValue
-                })
-            );
-        },
-        validationMessage: null
-    },
-    password: {
-        value: "",
-        update: (newValue: string) => {
-            set(produce((store: Store) => {
-                    store.createAccountForm.password.value = newValue
-                })
-            )
-        },
-        validationMessage: null
-    },
+    username: "",
+    setUsername: (username: string) => set(produce((state: Store) => {
+        state.createAccountForm.username = username;
+    })),
+    usernameValidationMessage: null,
+    password: "",
+    setPassword: (password: string) => set(produce((state: Store) => {
+        state.createAccountForm.password = password;
+    })),
+    passwordValidationMessage: null,
     responseMessage: null,
-    attemptCreateAccount: async () => {
+    attemptCreateAccount: async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
         // validate logic and set messages to be rendered by react + zustand
-        set(produce((state: Store) => {
-            const { username, password }: CreateAccountFormSlice = state.createAccountForm;
-            username.validationMessage = validateInput(username.value, "username");
-            password.validationMessage = validateInput(password.value, "password");
-        }));
-
         const { username, password } = get().createAccountForm;
+        const usernameMessage = validateInput(username, "username");
+        const passwordMessage = validateInput(password, "password");
 
-        if (username.validationMessage !== null || password.validationMessage !== null) return;
+        if (usernameMessage || passwordMessage) return set(produce((state: Store) => {
+            state.createAccountForm.usernameValidationMessage = usernameMessage;
+            state.createAccountForm.passwordValidationMessage = passwordMessage;
+        }));
 
         set(produce((state: Store) => void (state.createAccountForm.responseMessage = null)));
 
         // make, execute, and handle request
         const newUser: User = {
             id: undefined,
-            username: username.value,
-            password: password.value,
+            username: username,
+            password: password,
             role: Roles.USER
         };
 
-        const url = "http://localhost:8000/create-account"
-        const response: Response = await executeFetch("POST", url, newUser);
+        const response: Response = await executeFetch("POST", "http://localhost:8000/create-account", newUser);
         const { data: user, message }: ResponseBody<UserWithoutPassword> = await response.json();
     
         if (!([200, 201, 204].includes(response.status)) || !user) {
@@ -64,7 +55,7 @@ export const createAccountFormSlice = (set: ZustandSet<Store>, get: ZustandGet<S
             return;
         };
 
-        set(produce((state: Store) => void (state.user = user)));
+        set((state: Store) => ({ ...state, user: user }));
 
         get().clearForm();
     }

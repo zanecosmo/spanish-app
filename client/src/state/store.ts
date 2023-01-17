@@ -3,21 +3,15 @@ import produce from "immer";
 import { ResponseBody, Store, UserWithoutPassword } from "../types";
 import { loginFormSlice } from "../state/slices/login-slice";
 import { createAccountFormSlice } from "../state/slices/create-account-slice";
-import { appSlice } from "./slices/app-slice";
+import { homeSlice } from "./slices/home-slice";
 import { executeFetch } from "../utils";
 
 export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get) => ({
     user: null,
     setUser: (user: UserWithoutPassword) => set(produce((state: Store) => void (state.user = user))),
-    loginForm: {
-        ...loginFormSlice(set, get)
-    },
-    createAccountForm: {
-        ...createAccountFormSlice(set, get)
-    },
-    app: {
-        ...appSlice(set, get)
-    },
+    loginForm: { ...loginFormSlice(set, get) },
+    createAccountForm: { ...createAccountFormSlice(set, get) },
+    home: { ...homeSlice(set, get) },
     clearForm: () => {
         set(produce((state: Store) => {
             state.loginForm.username = "";
@@ -26,11 +20,11 @@ export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get)
             state.loginForm.usernameValidationMessage = null;
             state.loginForm.passwordValidationMessage = null;
 
-            state.createAccountForm.username.value = "";
-            state.createAccountForm.password.value = "";
+            state.createAccountForm.username = "";
+            state.createAccountForm.password = "";
             state.createAccountForm.responseMessage = null;
-            state.createAccountForm.username.validationMessage = null;
-            state.createAccountForm.password.validationMessage = null;
+            state.createAccountForm.usernameValidationMessage = null;
+            state.createAccountForm.passwordValidationMessage = null;
         }));
     },
     attemptLogout: async () => {    

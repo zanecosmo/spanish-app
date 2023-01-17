@@ -43,17 +43,29 @@ export interface LoginFormSlice {
 };
 
 export interface CreateAccountFormSlice {
-    username: ValidatedInput,
-    password: ValidatedInput,
-    responseMessage: string | null
-    attemptCreateAccount: () => Promise<void>;
+    username: string,
+    setUsername: (username: string) => void;
+    usernameValidationMessage: string | null;
+    password: string,
+    setPassword: (password: string) => void;
+    passwordValidationMessage: string | null;
+    responseMessage: string | null;
+    attemptCreateAccount: (event: FormEvent<HTMLFormElement>) => Promise<void>;
 };
 
-export interface AppSlice {
+export interface HomeSlice {
     wordList: Array<BaseWordPairDTO> | null;
-    getBaseWordPairs: () => void;
+    groups: Array<string>;
+    attemptUpdateGroup: (value: string) => void;
+    getWordsPayload: () => void;
     getWord: (wordId: number) => void;
     selectedWord: ExtendedWordDTO | null;
+    nullifySelectedWord: () => void;
+};
+
+export interface GroupDTO {
+    group: string;
+    parentWordId: number;
 };
 
 export interface Store {
@@ -63,7 +75,7 @@ export interface Store {
     createAccountForm: CreateAccountFormSlice;
     clearForm: () => void;
     attemptLogout: () => Promise<void>;
-    app: AppSlice;
+    home: HomeSlice;
     attemptLoginWithJWT: () => Promise<void>;
     // testGetWord: () => Promise<void>
 };
@@ -87,12 +99,17 @@ export interface GrammaticalInfo {
     case: string | null;
 };
 
+export interface WordsPayload {
+    wordList: Array<BaseWordPairDTO>;
+    groups: Array<string>;
+};
+
 export interface ExtendedWordPairDTO extends GrammaticalInfo {
-    id: number;
-    parentId: number;
+    word_pair_id: number;
+    parent_word_id: number;
     english: string;
     spanish: string;
-    partOfSpeech: PartsOfSpeech;
+    part_of_speech: PartsOfSpeech;
     group: string | null;
     difficulty: number | null;
 };

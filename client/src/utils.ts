@@ -32,7 +32,9 @@ export async function executeFetch(
 
     if (body) request.body = JSON.stringify(body);
 
+    
     const response: Response = await fetch(url, request);
+    console.log(response)
     
     return response;
 };

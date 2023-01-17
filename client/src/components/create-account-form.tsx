@@ -1,44 +1,42 @@
 import React, { FC } from "react";
 import { useStore } from "../state/store";
-import { Input, InputProps } from "./text-input";
-import { Button, ButtonProps } from "./button";
 import { Store } from "../types";
+import styles from "../styles/Styles.module.css";
 
 export const CreateAccountForm: FC = (): JSX.Element => {
-    const usernameInputProps: InputProps = {
-        classes: "username create-account",
-        updateValue: useStore((state: Store) => state.createAccountForm.username.update),
-        stateValue: useStore((state: Store) => state.createAccountForm.username.value),
-        placeholder: "Enter username here",
-        name: "Username"
-    };
-
-    const passwordInputProps: InputProps = {
-        classes: "password create-account",
-        updateValue: useStore((state: Store) => state.createAccountForm.password.update),
-        stateValue: useStore((state: Store) => state.createAccountForm.password.value),
-        placeholder: "Enter password here",
-        name: "Password"
-    };
-
-    const submitButtonProps: ButtonProps = {
-        classes: "submit-button create-account",
-        text: "CREATE ACCOUNT",
-        onClick: useStore((state: Store) => state.createAccountForm.attemptCreateAccount),
-    };
-
+    const { username, setUsername } = useStore((state: Store) => state.createAccountForm);
+    const { password, setPassword } = useStore((state: Store) => state.createAccountForm);
+    const usernameValidationMessage = useStore((state: Store) => state.createAccountForm.usernameValidationMessage);
+    const passwordValidationMessage = useStore((state: Store) => state.createAccountForm.passwordValidationMessage);
     const responseMessage: string | null = useStore((state: Store) => state.createAccountForm.responseMessage);
-    const usernameValidationMessage: string | null = useStore((state: Store) => state.createAccountForm.username.validationMessage);
-    const passwordValidationMessage: string | null = useStore((state: Store) => state.createAccountForm.password.validationMessage);
+    const attemptCreateAccount = useStore((state: Store) => state.createAccountForm.attemptCreateAccount)
 
     return(
-        <div className="entry-form">
-            <Input {...usernameInputProps}/>
-            {usernameValidationMessage && <div className="validation-message">{usernameValidationMessage}</div>}
-            <Input {...passwordInputProps}/>
-            {passwordValidationMessage && <div className="validation-message">{passwordValidationMessage}</div>}
-            {responseMessage !== null && <div className="response-message">{responseMessage}</div>}
-            <Button {...submitButtonProps}/>
-        </div>
+        <form onSubmit={attemptCreateAccount} className={styles["entry-form"]}>
+        <label htmlFor="username" className={styles["input-name"]}>Username</label>
+        <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className={styles["username create-account"]}
+        />
+        <div className={styles["validation-message"]}>{usernameValidationMessage}</div>
+        <label htmlFor="password" className={styles["input-name"]}>Password</label>
+        <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={styles["password create-account"]}
+        />
+        <div className={styles["validation-message"]}>{passwordValidationMessage}</div>
+        <button type="submit" className={styles["submit-button create-account"]}>LOGIN</button>
+        <div className={styles["response-message"]}>{responseMessage}</div>
+        </form>
     );
 };
