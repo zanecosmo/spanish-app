@@ -1,6 +1,6 @@
-import React, { FC } from "react";
+import React, { ChangeEvent, Dispatch, FC, FormEvent, SetStateAction, useState } from "react";
 import { useStore } from "../state/store"
-import { ExtendedWordDTO, PartsOfSpeech, Store } from "../types";
+import { ExtendedWordDTO, PartsOfSpeech, Roles, Store } from "../types";
 import { EditGroups } from "./edit-groups";
 import { Adjective } from "./words-by-part-of-speech/adjective";
 import { Adverb } from "./words-by-part-of-speech/adverb";
@@ -8,42 +8,106 @@ import { Conjunction } from "./words-by-part-of-speech/conjunction";
 import { Noun } from "./words-by-part-of-speech/noun";
 import { Preposition } from "./words-by-part-of-speech/preposition";
 import { Pronoun } from "./words-by-part-of-speech/pronoun";
-import { Verb } from "./words-by-part-of-speech/verb";
+import { Verb } from "./verb-form/verb";
 
-export const ExpandedWordView: FC = () => {
-  const selectedWord: ExtendedWordDTO = useStore((state: Store) => state.home.selectedWord!);
-  const nullifySelectedWord = useStore((state: Store) => state.home.nullifySelectedWord!);
-
-  const displayCorrectWordType = (): JSX.Element => {
-    console.log(selectedWord.wordPairs[0].part_of_speech);
-    switch (selectedWord.wordPairs[0].part_of_speech) {
-      case PartsOfSpeech.VERB: return <Verb />;
-      case PartsOfSpeech.ADVERB: return <Adverb />;
-      case PartsOfSpeech.NOUN: return <Noun />;
-      case PartsOfSpeech.PRONOUN: return <Pronoun />;
-      case PartsOfSpeech.ADJECTIVE: return <Adjective />;
-      case PartsOfSpeech.PREPOSITION: return <Preposition />;
-      case PartsOfSpeech.CONJUNCTION: return <Conjunction />;
-    };
+const displayCorrectWordType = (partOfSpeech: PartsOfSpeech): JSX.Element | null => {
+  switch (partOfSpeech) {
+    case PartsOfSpeech.VERB: return <Verb />;
+    case PartsOfSpeech.ADVERB: return <Adverb />;
+    case PartsOfSpeech.NOUN: return <Noun />;
+    case PartsOfSpeech.PRONOUN: return <Pronoun />;
+    case PartsOfSpeech.ADJECTIVE: return <Adjective />;
+    case PartsOfSpeech.PREPOSITION: return <Preposition />;
+    case PartsOfSpeech.CONJUNCTION: return <Conjunction />;
+    default: return null;
   };
+};
 
-  const goBack = (_event: React.MouseEvent<HTMLDivElement, MouseEvent>) => nullifySelectedWord();
+const createPartsOfSpeechSelect = () => {
+  const partsOfSpeech: Array<string> = [];
+  for (let part in PartsOfSpeech) partsOfSpeech.push(part);
+  return partsOfSpeech.map((part, i) => <option key={i} value={part}>{part}</option>);
+};
+
+interface WordViewProps {
+  submitForm: ((event: FormEvent<HTMLFormElement>) => void);
+  partOfSpeech: PartsOfSpeech | null;
+};
+
+export const WordView: FC<WordViewProps> = (props) => {
+  const [ partOfSpeech, setPartOfSpeech ] = useState(props.partOfSpeech)
+  // console.log(partOfSpeech)
+  const isAdmin = useStore((state: Store) => state.auth.user!.role === Roles.ADMIN);
+
+  const { isAdding, isEditing, isDeleting, isEditingGroup } = useStore((state: Store) => state.home.actions);
+  const { setIsEditing, setIsDeleting, setIsEditingGroup } = useStore((state: Store) => state.home.actions);
+
+  const selectedWord: ExtendedWordDTO = useStore((state: Store) => state.home.selectedWord!);
+  const { nullifySelectedWord, setIsEnglish } = useStore((state: Store) => state.home!);
+
+  const log = () => {
+    return <div>{`${partOfSpeech === null}`}</div>
+  };
 
   return (
     <div>
-      <div onClick={goBack}>Back</div>
-      <div>{`GROUP: ${selectedWord.group ? selectedWord.group : "None"}`}</div>
-      <div>{`PART OF SPEECH: ${selectedWord.wordPairs[0].part_of_speech}`}</div>
-      {displayCorrectWordType()}
-      <EditGroups />
-    </div>);
+      <button onClick={() => {
+        console.log("NULLIFY");
+        nullifySelectedWord()
+      }}>Back</button>
+
+      {(isAdmin && isEditing) || (isAdmin && isDeleting) || (isAdmin && isAdding)
+        ? null
+        : (<div>
+            <button type="button" onClick={() => setIsEditing(true)}>Edit Word</button>
+            <button type="button" onClick={() => setIsDeleting(true)}>Delete Word</button>
+          </div>)}
+
+      <form onSubmit={props.submitForm}> {/* pass in a method which either ADDS a new word, or UPDATES a pre-existing one */}
+
+        {(isAdmin && isAdding)
+          ? (<div>
+              <label htmlFor="part-of-speech">Part of Speech:</label>
+              <select
+                name="part-of-speech"
+                id="part-of-speech"
+                defaultValue="select"
+                onChange={(e: ChangeEvent<HTMLSelectElement>) => setPartOfSpeech(e.target.value as PartsOfSpeech)}
+              >
+                <option hidden value="select">select an option</option>
+                {createPartsOfSpeechSelect()}
+              </select>
+            </div>)
+          : <div>{`Part of Speech: ${partOfSpeech}`}</div>}
+
+        {(isAdmin && isAdding) && partOfSpeech === null
+          ? null
+          : (<div>
+            <button type="button" onClick={() => setIsEnglish(true)}>English</button>
+            <button type="button" onClick={() => setIsEnglish(false)}>Spanish</button>
+          </div>)}
+
+        {(isAdmin && isAdding) && partOfSpeech === null
+          ? null
+          : displayCorrectWordType(partOfSpeech!)}
+
+        {(isAdmin && isEditing) || (isAdmin && isAdding)
+          ? (<div>
+              <button type="submit">Submit</button>
+              <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
+            </div>)
+          : null}
+
+      </form>
+
+      {(isAdmin && isAdding) || (isAdmin && isEditing)
+        ? null
+        : isEditingGroup
+          ? <EditGroups setGroupBeingEdited={setIsEditingGroup}/>
+          : <div>
+              <div>{`Group: ${selectedWord.group ? selectedWord.group : "None"}`}</div>
+              <button type="button" onClick={() => setIsEditingGroup(true)}>Edit Group</button>
+            </div>}
+    </div>
+  );
 };
-
-// store all groups in state: string[] --------
-// map over existing groups
-// produce a dropdown option which displays each group
-// and which when clicked will assign that value to the word in question
-
-// button which says: create new group
-// textbox which when submitted adds that value to the list of groups in state as a group
-// when word is finished being edited submit the word assigned the new group 

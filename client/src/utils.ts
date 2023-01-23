@@ -1,4 +1,4 @@
-import { ResponseBody } from "./types";
+import { ExtendedWordPairDTO, GrammaticalNumber, ResponseBody } from "./types";
 
 export const hasNoCharacters = (text: string) => {
     for (let i = 0; i < text.length; i++) {
@@ -34,10 +34,28 @@ export async function executeFetch(
 
     
     const response: Response = await fetch(url, request);
-    console.log(response)
+    // console.log(response)
     
     return response;
 };
 
+
+export const getWordPairsByPerson = (
+    language: string,
+    wordPairs: ExtendedWordPairDTO[],
+    callback: (wp: ExtendedWordPairDTO) => boolean
+  ) => {
+    const wordPairsByPerson = wordPairs.filter(callback);
+  
+    const singular = wordPairsByPerson.find(wp => wp.number === GrammaticalNumber.SINGULAR);
+    const plural = wordPairsByPerson.find(wp => wp.number === GrammaticalNumber.PLURAL);
+  
+    if (!singular || !plural) throw Error("MISSING WORD BASED ON PERSON");
+  
+    return {
+      singular: language === "SPANISH" ? singular.spanish : singular.english,
+      plural: language === "SPANISH" ? plural.spanish : plural.english,
+    };
+  };
 
 

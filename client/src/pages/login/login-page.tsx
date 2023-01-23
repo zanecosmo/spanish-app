@@ -14,15 +14,15 @@ export const LoginPage: FC = (): JSX.Element => {
                 <div className="title">SPANISH APP</div>
                 <div className="form">
                     <div className="button-container">
-                        <div
+                        <button
                             onClick={() => setloginSelected(!loginSelected)}
                             className={loginClasses}
-                        >Login</div>
+                        >Login</button>
                         <div className="corner"></div>
-                        <div
+                        <button
                             onClick={() => setloginSelected(!loginSelected)}
                             className={createAccountclasses}
-                        >Create Account</div>
+                        >Create Account</button>
                     </div>
                     {loginSelected ? <LoginForm /> : <CreateAccountForm />}
                 </div>

@@ -39,7 +39,6 @@ export interface LoginFormSlice {
     setPassword: (password: string) => void;
     passwordValidationMessage: string | null;
     responseMessage: string | null;
-    attemptLogin: (event: FormEvent<HTMLFormElement>) => Promise<void>;
 };
 
 export interface CreateAccountFormSlice {
@@ -50,17 +49,81 @@ export interface CreateAccountFormSlice {
     setPassword: (password: string) => void;
     passwordValidationMessage: string | null;
     responseMessage: string | null;
-    attemptCreateAccount: (event: FormEvent<HTMLFormElement>) => Promise<void>;
+};
+
+export interface VerbFormState {
+    infinitive: string;
+    firstPerson: {
+        singular: string;
+        plural: string;
+    };
+    secondPerson: {
+        singular: string;
+        plural: string;
+    };
+    thirdPerson: {
+        singular: string;
+        plural: string;
+    };
+};
+
+export interface VerbFormStateSetters {
+    infinitive: (val: string) => void;
+    firstPerson: {
+    singular: (val: string) => void;
+    plural: (val: string) => void;
+    };
+    secondPerson: {
+    singular: (val: string) => void;
+    plural: (val: string) => void;
+    };
+    thirdPerson: {
+    singular: (val: string) => void;
+    plural: (val: string) => void;
+    };
+};
+
+export interface VerbFormStateAndSetters {
+    state: VerbFormState;
+    set: VerbFormStateSetters;
+    resetForm: () => void;
+    convertToForm: () => void
+}
+
+export interface VerbFormSlice {
+    english: VerbFormStateAndSetters;
+    spanish: VerbFormStateAndSetters;
+    // convertToWord: (formState: VerbFormState) => ExtendedWordDTO;
 };
 
 export interface HomeSlice {
     wordList: Array<BaseWordPairDTO> | null;
+    actions: {
+        isEditing: boolean,
+        setIsEditing: (bool:boolean) => void;
+        isAdding: boolean,
+        setIsAdding: (bool:boolean) => void;
+        isDeleting: boolean,
+        setIsDeleting: (bool:boolean) => void;
+        isEditingGroup: boolean,
+        setIsEditingGroup: (bool:boolean) => void;
+    },
+    isWordSelected: boolean;
+    setIsWordSelected: (bool: boolean) => void;
+    partOfSpeech: PartsOfSpeech | null;
+    setPartOfSpeech: (partOfSpeech: PartsOfSpeech) => void;
+    AddNewWord: () => void;
     groups: Array<string>;
     attemptUpdateGroup: (value: string) => void;
     getWordsPayload: () => void;
     getWord: (wordId: number) => void;
     selectedWord: ExtendedWordDTO | null;
     nullifySelectedWord: () => void;
+    forms: {
+        verb: VerbFormSlice
+    };
+    isEnglish: boolean,
+    setIsEnglish: (bool: boolean) => void
 };
 
 export interface GroupDTO {
@@ -68,16 +131,21 @@ export interface GroupDTO {
     parentWordId: number;
 };
 
-export interface Store {
+export interface AuthSlice {
     user: UserWithoutPassword | null;
     setUser: (user: UserWithoutPassword) => void;
+    attemptLogin: (event: FormEvent<HTMLFormElement>) => Promise<void>;
+    attemptLoginWithJWT: () => Promise<void>;
+    attemptCreateAccount: (event: FormEvent<HTMLFormElement>) => Promise<void>;
+    attemptLogout: () => Promise<void>;
+};
+
+export interface Store {
+    auth: AuthSlice;
     loginForm: LoginFormSlice;
     createAccountForm: CreateAccountFormSlice;
     clearForm: () => void;
-    attemptLogout: () => Promise<void>;
     home: HomeSlice;
-    attemptLoginWithJWT: () => Promise<void>;
-    // testGetWord: () => Promise<void>
 };
 
 export enum PartsOfSpeech {
@@ -91,7 +159,7 @@ export enum PartsOfSpeech {
 };
 
 export interface GrammaticalInfo {
-    partOfSpeech: PartsOfSpeech;
+    part_of_speech: PartsOfSpeech | null;
     infinitive: boolean;
     person: number | null;
     number: string | null;
@@ -105,11 +173,24 @@ export interface WordsPayload {
 };
 
 export interface ExtendedWordPairDTO extends GrammaticalInfo {
-    word_pair_id: number;
-    parent_word_id: number;
+    word_pair_id: number | null;
+    parent_word_id: number | null;
     english: string;
     spanish: string;
-    part_of_speech: PartsOfSpeech;
+    part_of_speech: PartsOfSpeech | null;
+    group: string | null;
+    difficulty: number | null;
+};
+
+export interface NewWord {
+    id: number | undefined;
+    group: string | null;
+    wordPairs: Array<NewWordPair>;
+}
+
+export interface NewWordPair extends GrammaticalInfo {
+    english: string;
+    spanish: string;
     group: string | null;
     difficulty: number | null;
 };

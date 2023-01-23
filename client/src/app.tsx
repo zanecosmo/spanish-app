@@ -5,8 +5,8 @@ import { useStore } from "./state/store";
 import { Store, UserWithoutPassword } from "./types";
 
 export const App: FC = (): JSX.Element => {
-    const user: UserWithoutPassword | null = useStore((state: Store) => state.user);
-    const attemptLoginWithJWT = useStore((state: Store) => state.attemptLoginWithJWT);
+    const user: UserWithoutPassword | null = useStore((state: Store) => state.auth.user);
+    const attemptLoginWithJWT = useStore((state: Store) => state.auth.attemptLoginWithJWT);
     
     useEffect(() => void attemptLoginWithJWT(), [])
 

@@ -1,11 +1,68 @@
 import { produce } from "immer";
-import { HomeSlice, ExtendedWordDTO, ResponseBody, Store, ZustandGet, ZustandSet, WordsPayload, GroupDTO } from "../../types";
-import { executeFetch } from "../../utils";
+import { HomeSlice, ExtendedWordDTO, ResponseBody, Store, ZustandGet, ZustandSet, WordsPayload, GroupDTO, PartsOfSpeech } from "../../../types";
+import { executeFetch } from "../../../utils";
+import { verbFormSlice } from "../../../components/verb-form/verb-form-slice";
 
 export const homeSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): HomeSlice => ({
     wordList: null,
     groups: [],
     selectedWord: null,
+    isWordSelected: false,
+    setIsWordSelected: (bool: boolean) => set(produce((state: Store) => void (state.home.isWordSelected = bool))),
+    partOfSpeech: null,
+    setPartOfSpeech: (partOfSpeech: PartsOfSpeech) => {
+        set(produce((state: Store) => {
+            state.home.partOfSpeech = partOfSpeech;
+            state.home.selectedWord?.wordPairs.forEach(wp => wp.part_of_speech = partOfSpeech);
+        }));
+    },
+    actions: {
+        isEditing: false,
+        setIsEditing: (bool: boolean) => set(produce((state: Store) => void (state.home.actions.isEditing = bool))),
+        isAdding: false,
+        setIsAdding: (bool: boolean) => set(produce((state: Store) => void (state.home.actions.isAdding = bool))),
+        isDeleting: false,
+        setIsDeleting: (bool: boolean) => set(produce((state: Store) => void (state.home.actions.isDeleting = bool))),
+        isEditingGroup: false,
+        setIsEditingGroup: (bool: boolean) => set(produce((state: Store) => void (state.home.actions.isEditingGroup = bool))),
+    },
+    forms: { verb: { ...verbFormSlice(set, get) } },
+    isEnglish: false,
+    setIsEnglish: (bool: boolean) => set(produce((state: Store) => {
+        state.home.isEnglish = bool;
+    })),
+    AddNewWord: () => {
+        const newWord: ExtendedWordDTO = {
+            id: undefined,
+            group: null,
+            wordPairs: []
+        };
+
+        for (let i = 0; i < 6; i++) {
+            newWord.wordPairs.push({
+                word_pair_id: null,
+                parent_word_id: null,
+                english: "",
+                spanish: "",
+                part_of_speech: null,
+                group: null,
+                difficulty: null,
+                infinitive: false,
+                person: null,
+                number: null,
+                gender: null,
+                case: null
+            });
+        };
+
+        console.log(get().home.actions.isEditing);
+
+        set(produce((state: Store) => {
+            state.home.isWordSelected = true;
+            state.home.selectedWord = newWord;
+            state.home.actions.isAdding = true;
+        }));
+    },
     attemptUpdateGroup: async (group: string) => {
         const parentWordId = get().home.selectedWord!.id;
 
@@ -39,7 +96,10 @@ export const homeSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): HomeS
         }));
         
     },
-    nullifySelectedWord: () => set(produce((state: Store) => void (state.home.selectedWord = null))),
+    nullifySelectedWord: () => set(produce((state: Store) => {
+        state.home.isWordSelected = false;
+        state.home.selectedWord = null;
+    })),
     getWordsPayload: async () => {
         const response: Response = await executeFetch("GET", "http://localhost:8000/get-word-pairs");
         const { data, error, message }: ResponseBody<WordsPayload> = await response.json();
@@ -75,6 +135,11 @@ export const homeSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): HomeS
             return;
         };
 
-        set(produce((state: Store) => void (state.home.selectedWord = word)));
+        set(produce((state: Store) => {
+            state.home.isWordSelected = true;
+            state.home.selectedWord = word
+        }));
+        
+        console.log(get().home.selectedWord);
     }
 });

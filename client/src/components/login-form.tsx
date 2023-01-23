@@ -9,7 +9,7 @@ export const LoginForm: FC = (): JSX.Element => {
     const usernameValidationMessage = useStore((state: Store) => state.loginForm.usernameValidationMessage);
     const passwordValidationMessage = useStore((state: Store) => state.loginForm.passwordValidationMessage);
     const responseMessage: string | null = useStore((state: Store) => state.loginForm.responseMessage);
-    const attemptLogin = useStore((state: Store) => state.loginForm.attemptLogin);
+    const attemptLogin = useStore((state: Store) => state.auth.attemptLogin);
 
     return (
         <form onSubmit={attemptLogin} className={styles["entry-form"]}>

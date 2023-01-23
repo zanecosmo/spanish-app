@@ -1,9 +1,11 @@
 import { useStore } from "../state/store";
 import React, { ChangeEvent, FC, FormEvent, useState } from "react";
 import { Store } from "../types";
-import styles from "../styles/Styles.module.css";
+// import styles from "../styles/Styles.module.css";
 
-export const EditGroups: FC = () => {
+interface EditGroupsProps { setGroupBeingEdited: (bool: boolean) => void };
+
+export const EditGroups: FC<EditGroupsProps> = (props) => {
   const groups = useStore((state: Store) => state.home.groups);
   const [ groupBeingSelected, setGroupBeingSelected ] = useState(true);
   const [ groupTextInput, setGroupTextInput ] = useState("");
@@ -26,11 +28,14 @@ export const EditGroups: FC = () => {
     event.preventDefault();
     if (groupBeingSelected) attemptUpdateGroup(selectedGroup);
     else attemptUpdateGroup(groupTextInput);
+    // add error handling here
+    props.setGroupBeingEdited(false);
   };
 
   return (
     <div>
-      <form onSubmit={attemptUpdate} className={styles["entry-form"]}>
+      <form onSubmit={attemptUpdate}>
+      {/* className={styles["entry-form"]} */}
 
         <div onClick={disableCreateArea} className={`group-select-area`}>
 
@@ -51,7 +56,8 @@ export const EditGroups: FC = () => {
 
         <div onClick={disableSelectArea} className={`group-create-area`}>
 
-          <label htmlFor="group" className={styles["input-name"]}>Username</label>
+          <label htmlFor="group">Create New Group</label>
+          {/* className={styles["input-name"]} */}
 
           <input
               type="text"
@@ -60,13 +66,14 @@ export const EditGroups: FC = () => {
               placeholder="Type Group Name Here"
               value={groupTextInput}
               onChange={(e) => setGroupTextInput(e.target.value)}
-              className={styles["username login"]}
+              // className={styles["username login"]}
           />
 
         </div>
 
-        <button type="submit" className={styles["submit-button login"]}>Submit</button>
+        <button type="submit">Submit</button>
 
+        <button type="button" onClick={() => props.setGroupBeingEdited(false)}>Cancel</button>
       </form>
     </div>
   )

@@ -1,0 +1,29 @@
+@font-face {
+  font-family: "Montserrat";
+  src: url("../../client/public/fonts/Montserrat-Regular.ttf");
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+
+:root {
+  --offwhite: #fdfdfd;
+  --dark-offwhite: #f8f8f8;
+  --light-gray: #f3f3f3;
+  --dark-gray: #909090;
+  --darker-gray: #404040;
+}
+
+body {
+  position: fixed;
+  width: 100vw;
+  margin: 0;
+}
+
+#root {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+}

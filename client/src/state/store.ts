@@ -1,14 +1,14 @@
 import create, { StoreApi, UseBoundStore } from "zustand";
 import produce from "immer";
 import { ResponseBody, Store, UserWithoutPassword } from "../types";
-import { loginFormSlice } from "../state/slices/login-slice";
-import { createAccountFormSlice } from "../state/slices/create-account-slice";
-import { homeSlice } from "./slices/home-slice";
+import { loginFormSlice } from "./slices/auth/forms/login-form-slice";
+import { createAccountFormSlice } from "./slices/auth/forms/create-account-form-slice";
+import { homeSlice } from "./slices/app/home-slice";
 import { executeFetch } from "../utils";
+import { authSlice } from "./slices/auth/auth-slice";
 
 export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get) => ({
-    user: null,
-    setUser: (user: UserWithoutPassword) => set(produce((state: Store) => void (state.user = user))),
+    auth: { ...authSlice(set, get) },
     loginForm: { ...loginFormSlice(set, get) },
     createAccountForm: { ...createAccountFormSlice(set, get) },
     home: { ...homeSlice(set, get) },
@@ -27,23 +27,4 @@ export const useStore: UseBoundStore<StoreApi<Store>> = create<Store>((set, get)
             state.createAccountForm.passwordValidationMessage = null;
         }));
     },
-    attemptLogout: async () => {    
-        const response = await executeFetch("POST", "http://localhost:8000/logout");
-        const body = await response.json();
-    
-        if (response.status === 401) return console.log(body.message);
-
-        set((state: Store) => ({ ...state, user: null }));
-    },
-    attemptLoginWithJWT: async () => {
-        const response = await executeFetch("GET", "http://localhost:8000/login-with-jwt");
-        const { data: user, message }: ResponseBody<UserWithoutPassword> = await response.json();
-
-        if (response.status === 401) {
-            console.log(message);
-            return;
-        };
-
-        set((state: Store) => ({ ...state, user: user }));
-    }
 }));

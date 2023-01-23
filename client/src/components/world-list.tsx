@@ -1,11 +1,16 @@
 import React, { FC } from "react";
 import { useStore } from "../state/store";
-import { BaseWordPairDTO, Store } from "../types";
+import { BaseWordPairDTO, Roles, Store } from "../types";
 
 export const BaseWordListView: FC = () => {
   const { getWord, wordList } = useStore((state: Store) => state.home);
+  const AddNewWord = useStore((state: Store) => state.home.AddNewWord);
+  // generate selected word
+  const isAdmin = useStore((state: Store) => state.auth.user!.role === Roles.ADMIN);
 
   return (
+    <div>
+      {!isAdmin ? null : <button onClick={() => AddNewWord()}>ADD WORD</button>}
       <table>
           <thead>
               <tr>
@@ -24,5 +29,6 @@ export const BaseWordListView: FC = () => {
           ))}
           </tbody>
       </table>
+    </div>
   );
 };

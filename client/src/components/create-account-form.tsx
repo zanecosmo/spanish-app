@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { useStore } from "../state/store";
 import { Store } from "../types";
-import styles from "../styles/Styles.module.css";
+// import styles from "../styles/Styles.module.css";
 
 export const CreateAccountForm: FC = (): JSX.Element => {
     const { username, setUsername } = useStore((state: Store) => state.createAccountForm);
@@ -9,11 +9,13 @@ export const CreateAccountForm: FC = (): JSX.Element => {
     const usernameValidationMessage = useStore((state: Store) => state.createAccountForm.usernameValidationMessage);
     const passwordValidationMessage = useStore((state: Store) => state.createAccountForm.passwordValidationMessage);
     const responseMessage: string | null = useStore((state: Store) => state.createAccountForm.responseMessage);
-    const attemptCreateAccount = useStore((state: Store) => state.createAccountForm.attemptCreateAccount)
+    const attemptCreateAccount = useStore((state: Store) => state.auth.attemptCreateAccount)
 
     return(
-        <form onSubmit={attemptCreateAccount} className={styles["entry-form"]}>
-        <label htmlFor="username" className={styles["input-name"]}>Username</label>
+        <form onSubmit={attemptCreateAccount}>
+            {/* className={styles["entry-form"]} */}
+        <label htmlFor="username">Username</label>
+        {/* className={styles["input-name"]} */}
         <input
             type="text"
             id="username"
@@ -21,10 +23,12 @@ export const CreateAccountForm: FC = (): JSX.Element => {
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className={styles["username create-account"]}
+            // className={styles["username create-account"]}
         />
-        <div className={styles["validation-message"]}>{usernameValidationMessage}</div>
-        <label htmlFor="password" className={styles["input-name"]}>Password</label>
+        <div>{usernameValidationMessage}</div>
+        {/* className={styles["validation-message"]} */}
+        <label htmlFor="password">Password</label>
+        {/* className={styles["input-name"]} */}
         <input
             type="password"
             id="password"
@@ -32,11 +36,14 @@ export const CreateAccountForm: FC = (): JSX.Element => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className={styles["password create-account"]}
+            // className={styles["password create-account"]}
         />
-        <div className={styles["validation-message"]}>{passwordValidationMessage}</div>
-        <button type="submit" className={styles["submit-button create-account"]}>LOGIN</button>
-        <div className={styles["response-message"]}>{responseMessage}</div>
+        <div>{passwordValidationMessage}</div>
+        {/* className={styles["validation-message"]} */}
+        <button type="submit">LOGIN</button>
+        {/* className={styles["submit-button create-account"]} */}
+        <div>{responseMessage}</div>
+        {/* className={styles["response-message"]} */}
         </form>
     );
 };

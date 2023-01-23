@@ -1,0 +1,61 @@
+@font-face {
+  font-family: "Montserrat";
+  src: url("../../../public/fonts/Montserrat-Regular.ttf");
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+
+:root {
+  --offwhite: #fdfdfd;
+  --dark-offwhite: #f8f8f8;
+  --light-gray: #f3f3f3;
+  --dark-gray: #909090;
+  --darker-gray: #404040;
+}
+
+body {
+  position: fixed;
+  width: 100vw;
+  margin: 0;
+}
+
+#root {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ROOT STUFF ^^ */
+
+.nav {
+  height: 60px;
+  width: 100vw;
+  border-bottom: 1px solid var(--dark-gray);
+
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.profile-group {
+  margin-left: auto;
+
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.title {
+  height: 80%;
+  width: 100px;
+  background-color: var(--dark-gray);
+}
+
+.nav-button {
+  height: 80%;
+}
+
+
+
+
