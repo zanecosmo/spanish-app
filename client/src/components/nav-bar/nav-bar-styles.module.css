@@ -17,7 +17,7 @@
 }
 
 body {
-  position: fixed;
+  /* position: fixed; */
   width: 100vw;
   margin: 0;
 }

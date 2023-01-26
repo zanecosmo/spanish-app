@@ -138,6 +138,18 @@ export enum GrammaticalNumber {
     PLURAL = "plural"
 };
 
+export enum Gender {
+    MASCULINE = "MASCULINE",
+    FEMININE = "FEMININE"
+};
+
+export enum Cases {
+    NOMINATIVE = "NOMINATIVE",
+    GENITIVE = "GENITIVE",
+    DATIVE = "DATIVE",
+    ACCUSITIVE = "ACCUSITIVE"
+};
+
 export interface WordsToStudy<T> {
     words: {
         [key: string]: Array<T>;

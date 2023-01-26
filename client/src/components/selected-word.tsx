@@ -2,26 +2,7 @@ import React, { ChangeEvent, Dispatch, FC, FormEvent, SetStateAction, useState }
 import { useStore } from "../state/store"
 import { ExtendedWordDTO, PartsOfSpeech, Roles, Store } from "../types";
 import { EditGroups } from "./edit-groups";
-import { Adjective } from "./words-by-part-of-speech/adjective";
-import { Adverb } from "./words-by-part-of-speech/adverb";
-import { Conjunction } from "./words-by-part-of-speech/conjunction";
-import { Noun } from "./words-by-part-of-speech/noun";
-import { Preposition } from "./words-by-part-of-speech/preposition";
-import { Pronoun } from "./words-by-part-of-speech/pronoun";
-import { Verb } from "./verb-form/verb";
-
-const displayCorrectWordType = (partOfSpeech: PartsOfSpeech): JSX.Element | null => {
-  switch (partOfSpeech) {
-    case PartsOfSpeech.VERB: return <Verb />;
-    case PartsOfSpeech.ADVERB: return <Adverb />;
-    case PartsOfSpeech.NOUN: return <Noun />;
-    case PartsOfSpeech.PRONOUN: return <Pronoun />;
-    case PartsOfSpeech.ADJECTIVE: return <Adjective />;
-    case PartsOfSpeech.PREPOSITION: return <Preposition />;
-    case PartsOfSpeech.CONJUNCTION: return <Conjunction />;
-    default: return null;
-  };
-};
+import { FormSelector } from "./form-selector";
 
 const createPartsOfSpeechSelect = () => {
   const partsOfSpeech: Array<string> = [];
@@ -87,9 +68,9 @@ export const WordView: FC<WordViewProps> = (props) => {
             <button type="button" onClick={() => setIsEnglish(false)}>Spanish</button>
           </div>)}
 
-        {(isAdmin && isAdding) && partOfSpeech === null
+        {/* {(isAdmin && isAdding) && partOfSpeech === null
           ? null
-          : displayCorrectWordType(partOfSpeech!)}
+          : <FormSelector partOfSpeech={partOfSpeech!} />} */}
 
         {(isAdmin && isEditing) || (isAdmin && isAdding)
           ? (<div>

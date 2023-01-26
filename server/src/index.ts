@@ -7,7 +7,7 @@ import { enableAdminRoutes } from "./routes/word-admin-router";
 import cors from "cors";
 import { enableUserRouter } from "./routes/user-router";
 import { nextTick } from "process";
-import { Roles } from "./types";
+import { Cases, Gender, GrammaticalNumber, PartsOfSpeech, Roles, Word, WordPair } from "./types";
 // import { verb } from "./test-verb";
 
 dotenv.config();
@@ -43,13 +43,32 @@ const run = async () => {
     app.listen(8000, async (): Promise<void> => {
         console.log("YOUR SERVER IS RUNNING ON 8000, YOU'D BETTER GO CATCH IT");
 
-        // const testUser = {
-        //     id: 78,
-        //     username: "fart",
-        //     role: Roles.USER
-        // };
+        const testUser = {
+            id: 90,
+            username: "wart",
+            role: Roles.ADMIN
+        };
 
-        // const payload = await database.getBaseWordPairs(testUser);
+        const word: Word = {
+            id: undefined,
+            group: null,
+            wordPairs: [
+                {
+                    id: undefined,
+                    english: "in/on",
+                    spanish: "en",
+                    parentId: undefined,
+                    partOfSpeech: PartsOfSpeech.PREPOSITION,
+                    infinitive: false,
+                    person: null,
+                    number: null,
+                    gender: null,
+                    case: null
+                }
+            ]
+        };
+
+        // const payload = await database.insertWord(word);
 
         // console.log(payload);
     });

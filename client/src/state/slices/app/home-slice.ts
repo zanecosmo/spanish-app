@@ -32,34 +32,34 @@ export const homeSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): HomeS
         state.home.isEnglish = bool;
     })),
     AddNewWord: () => {
-        const newWord: ExtendedWordDTO = {
-            id: undefined,
-            group: null,
-            wordPairs: []
-        };
+        // const newWord: ExtendedWordDTO = {
+        //     id: undefined,
+        //     group: null,
+        //     wordPairs: []
+        // };
 
-        for (let i = 0; i < 6; i++) {
-            newWord.wordPairs.push({
-                word_pair_id: null,
-                parent_word_id: null,
-                english: "",
-                spanish: "",
-                part_of_speech: null,
-                group: null,
-                difficulty: null,
-                infinitive: false,
-                person: null,
-                number: null,
-                gender: null,
-                case: null
-            });
-        };
+        // for (let i = 0; i < 6; i++) {
+        //     newWord.wordPairs.push({
+        //         word_pair_id: null,
+        //         parent_word_id: null,
+        //         english: "",
+        //         spanish: "",
+        //         part_of_speech: null,
+        //         group: null,
+        //         difficulty: null,
+        //         infinitive: false,
+        //         person: null,
+        //         number: null,
+        //         gender: null,
+        //         case: null
+        //     });
+        // };
 
         console.log(get().home.actions.isEditing);
 
         set(produce((state: Store) => {
             state.home.isWordSelected = true;
-            state.home.selectedWord = newWord;
+            // state.home.selectedWord = newWord;
             state.home.actions.isAdding = true;
         }));
     },
@@ -97,6 +97,8 @@ export const homeSlice = (set: ZustandSet<Store>, get: ZustandGet<Store>): HomeS
         
     },
     nullifySelectedWord: () => set(produce((state: Store) => {
+        state.home.forms.verb.english.resetForm();
+        state.home.forms.verb.spanish.resetForm();
         state.home.isWordSelected = false;
         state.home.selectedWord = null;
     })),

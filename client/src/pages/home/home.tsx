@@ -1,4 +1,4 @@
-import React, { FC, FormEvent, useEffect } from "react";
+import React, { FC, FormEvent, useEffect, useState } from "react";
 import { NavBar } from "../../components/nav-bar/nav-bar";
 import { WordView } from "../../components/selected-word";
 import { BaseWordListView } from "../../components/world-list";
@@ -7,6 +7,11 @@ import { Store } from "../../types";
 
 
 export const Home: FC = (): JSX.Element => {
+
+  const [ wordSelected, setWordSelected ] = useState(false);
+
+  ////
+
   const { getWordsPayload, selectedWord, AddNewWord, isWordSelected } = useStore((state: Store) => state.home);
   const { isAdding, isEditing, isDeleting } = useStore((state: Store) => state.home.actions);
   useEffect(() => void getWordsPayload(), []);
@@ -51,11 +56,15 @@ export const Home: FC = (): JSX.Element => {
     );
   };
 
+  const display = () => {
+    return <BaseWordListView />
+  }
+
   return (
       <div>
         <NavBar />
         <br />
-        {displayCorrectWordView()}
+        {display()}
       </div>
   );
 };

@@ -17,13 +17,13 @@
 }
 
 body {
-  position: fixed;
+  /* position: fixed; */
   width: 100vw;
   margin: 0;
 }
 
 #root {
-  position: fixed;
+  /* position: fixed; */
   width: 100vw;
   height: 100vh;
 }

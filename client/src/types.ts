@@ -159,7 +159,7 @@ export enum PartsOfSpeech {
 };
 
 export interface GrammaticalInfo {
-    part_of_speech: PartsOfSpeech | null;
+    part_of_speech: PartsOfSpeech;
     infinitive: boolean;
     person: number | null;
     number: string | null;
@@ -177,7 +177,6 @@ export interface ExtendedWordPairDTO extends GrammaticalInfo {
     parent_word_id: number | null;
     english: string;
     spanish: string;
-    part_of_speech: PartsOfSpeech | null;
     group: string | null;
     difficulty: number | null;
 };
@@ -220,4 +219,9 @@ export interface ResponseBody<T> {
     error: string | null;
     message: string | null;
     data: T | null;
+};
+
+export enum Gender {
+    MASCULINE = "MASCULINE",
+    FEMININE = "FEMININE"
 };
