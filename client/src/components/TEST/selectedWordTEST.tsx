@@ -1,10 +1,12 @@
 import React, { Dispatch, FC, FormEvent, SetStateAction, useState } from "react";
 import { useStore } from "../../state/store"
-import { Roles, Store } from "../../types";
+import { PartsOfSpeech, Roles, Store } from "../../types";
 import { EditGroups } from "../edit-groups";
 import { FormSelector } from "../form-selector";
 import { Action, useExtendedWordState } from "./extended-word-state-hook";
-import { ExtractedState, ExtractedWord, FormProps } from "./types";
+import { initialPronounState } from "./reducers/pronoun";
+import { PronounFormProps } from "./TEST-pronoun-state";
+import { ExtractedPronoun, ExtractedState, ExtractedWord, FormProps } from "./types";
 
 interface SelectedWordProps {
   word: ExtractedWord,
@@ -20,7 +22,7 @@ export const SelectedWord: FC<SelectedWordProps> = ({ word, setWordSelected }) =
   const [ usingEnglish, setUsingEnglish ] = useState(false);
   const [ isEditingGroup, setIsEditingGroup ] = useState(false);
 
-  if (!state || !dispatch) throw Error("REDUCER FAILED");
+  // if (!state || !dispatch) throw Error("REDUCER FAILED");
 
   const editWord = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,10 +32,16 @@ export const SelectedWord: FC<SelectedWordProps> = ({ word, setWordSelected }) =
   };
 
   const formProps: FormProps<ExtractedState, Action> = {
-    state: state as ExtractedState,
+    state: state,
     dispatch: dispatch,
     readOnly: !isEditing,
     usingEnglish: usingEnglish
+  };
+
+  const pronounProps = {
+    pronounState: (word.structure ? word.structure : initialPronounState) as ExtractedPronoun,
+    readOnly: !isEditing,
+    usingEnglish: usingEnglish,
   };
 
   return (
@@ -53,15 +61,15 @@ export const SelectedWord: FC<SelectedWordProps> = ({ word, setWordSelected }) =
           <button type="button" onClick={() => !usingEnglish && setUsingEnglish(true)}>English</button>
           <button type="button" onClick={() => usingEnglish && setUsingEnglish(false)}>Spanish</button>
 
-          <FormSelector partOfSpeech={word.partOfSpeech} formProps={formProps} />
+          <FormSelector partOfSpeech={word.partOfSpeech} formProps={formProps} pronounFormProps={pronounProps}/>
 
           {(isAdmin && isEditing)
             ? (<div>
                 <button type="submit">Submit</button>
-                <button type="button" onClick={() => isEditing && setIsEditing(false)}>Cancel</button>
+                {/* also need to reset state here vv */}
+                <button type="button" onClick={() => isEditing && setIsEditing(false)}>Cancel</button> 
               </div>)
             : null}
-          
       </form>
 
       {isEditingGroup

@@ -1,16 +1,9 @@
 import React, { ChangeEvent, Dispatch, FC, FormEvent } from "react";
 import styles from "../../styles/Styles.module.css";
 import { ConjunctionAction } from "../TEST/reducers/conjunction";
-import { ExtractedConjunction } from "../TEST/types";
+import { ExtractedConjunction, FormProps } from "../TEST/types";
 
-interface ConjunctionProps {
-  state: ExtractedConjunction;
-  dispatch: Dispatch<ConjunctionAction>;
-  readOnly: boolean;
-  usingEnglish: boolean
-};
-
-export const Conjunction: FC<ConjunctionProps> = (props) => {
+export const Conjunction: FC<FormProps<ExtractedConjunction, ConjunctionAction>> = (props) => {
   const { state, dispatch, readOnly, usingEnglish } = props;
 
   const actionType = usingEnglish ? "english" : "spanish";

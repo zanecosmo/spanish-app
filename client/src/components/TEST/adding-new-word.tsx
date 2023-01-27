@@ -48,7 +48,7 @@ const NewWordForm: FC<NewWordFormProps> = ({ partOfSpeech, setWordBeingAdded }) 
         <button type="button" onClick={() => !usingEnglish && setUsingEnglish(true)}>English</button>
         <button type="button" onClick={() => usingEnglish && setUsingEnglish(false)}>Spanish</button>
       </div>
-      <FormSelector partOfSpeech={partOfSpeech} formProps={formProps}/>
+      {/* <FormSelector partOfSpeech={partOfSpeech} formProps={formProps}/> */}
       <button type="submit">Submit</button>
     </form>
   );

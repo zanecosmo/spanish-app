@@ -225,3 +225,10 @@ export enum Gender {
     MASCULINE = "MASCULINE",
     FEMININE = "FEMININE"
 };
+
+export enum Case {
+    NOMINITIVE = "NOMINITIVE",
+    GENITIVE = "GENITIVE",
+    DATIVE = "DATIVE",
+    ACCUSITIVE = "ACCUSITIVE"
+};
