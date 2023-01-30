@@ -5,8 +5,8 @@ import { EditGroups } from "../edit-groups";
 import { FormSelector } from "../form-selector";
 import { Action, useExtendedWordState } from "./extended-word-state-hook";
 import { initialPronounState } from "./reducers/pronoun";
-import { PronounFormProps } from "./TEST-pronoun-state";
-import { ExtractedPronoun, ExtractedState, ExtractedWord, FormProps } from "./types";
+import { initialVerbState } from "./reducers/verb";
+import { ExtractedState, ExtractedWord, FormProps, NewFormProps } from "./types";
 
 interface SelectedWordProps {
   word: ExtractedWord,
@@ -31,17 +31,26 @@ export const SelectedWord: FC<SelectedWordProps> = ({ word, setWordSelected }) =
     setWordSelected(null);
   };
 
-  const formProps: FormProps<ExtractedState, Action> = {
-    state: state,
+  let  initialState: ExtractedState;
+
+  if (word.partOfSpeech === PartsOfSpeech.VERB) {
+    initialState = (word.structure ? word.structure : initialVerbState);
+  }
+
+  else if (word.partOfSpeech === PartsOfSpeech.PRONOUN) {
+    initialState = (word.structure ? word.structure : initialPronounState);
+  }
+
+  else {
+    initialState = state;
+  };
+
+
+  const formProps: FormProps<ExtractedState, Action> | NewFormProps = {
+    state: initialState,
     dispatch: dispatch,
     readOnly: !isEditing,
     usingEnglish: usingEnglish
-  };
-
-  const pronounProps = {
-    pronounState: (word.structure ? word.structure : initialPronounState) as ExtractedPronoun,
-    readOnly: !isEditing,
-    usingEnglish: usingEnglish,
   };
 
   return (
@@ -61,7 +70,7 @@ export const SelectedWord: FC<SelectedWordProps> = ({ word, setWordSelected }) =
           <button type="button" onClick={() => !usingEnglish && setUsingEnglish(true)}>English</button>
           <button type="button" onClick={() => usingEnglish && setUsingEnglish(false)}>Spanish</button>
 
-          <FormSelector partOfSpeech={word.partOfSpeech} formProps={formProps} pronounFormProps={pronounProps}/>
+          <FormSelector partOfSpeech={word.partOfSpeech} formProps={formProps} />
 
           {(isAdmin && isEditing)
             ? (<div>

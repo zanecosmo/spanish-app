@@ -6,18 +6,23 @@ export type ExtractedState =
 | ExtractedNoun
 | ExtractedPreposition
 | ExtractedAdjective
+| ExtractedVerb
 | ExtractedPronoun;
 
+interface WordPair extends Record<string, string> {
+  english: string,
+  spanish: string
+};
+
+export interface NumberPair extends Record<string, WordPair> {
+  singular: WordPair,
+  plural: WordPair
+};
 
 export type ExtractedWord = {
   partOfSpeech: PartsOfSpeech,
   group: string | null,
   structure: ExtractedState,
-};
-
-interface WordPair {
-  english: string,
-  spanish: string
 };
 
 export interface ExtractedConjunction {
@@ -70,58 +75,54 @@ export interface ExtractedAdverb {
   spanish: string
 };
 
-export type EditablePronounState = [ ExtractedPronoun, ExtractedPronoun | null ];
+export type EditableVerbState = [ ExtractedVerb, ExtractedVerb | null ];
 
-export interface ExtractedPronoun {
-  ["gender"]: Gender | "",
-  ["nominitive.singular.english"]: string,
-  ["nominitive.singular.spanish"]: string,
-  ["nominitive.plural.english"]: string,
-  ["nominitive.plural.spanish"]: string,
-  ["dative.singular.english"]: string,
-  ["dative.singular.spanish"]: string,
-  ["dative.plural.english"]: string,
-  ["dative.plural.spanish"]: string,
-  ["accusitive.singular.english"]: string,
-  ["accusitive.singular.spanish"]: string,
-  ["accusitive.plural.english"]: string,
-  ["accusitive.plural.spanish"]: string,
-  ["genitive.masculine.singular.english"]: string,
-  ["genitive.masculine.singular.spanish"]: string,
-  ["genitive.masculine.plural.english"]: string,
-  ["genitive.masculine.plural.spanish"]: string,
-  ["genitive.feminine.singular.english"]: string,
-  ["genitive.feminine.singular.spanish"]: string,
-  ["genitive.feminine.plural.english"]: string,
-  ["genitive.feminine.plural.spanish"]: string,
+export interface ExtractedVerb extends Record<string, string> {
+  ["infinitive"]: string,
+  ["1st.sg.eng"]: string,
+  ["1st.pl.eng"]: string,
+  ["2nd.sg.eng"]: string,
+  ["2nd.pl.eng"]: string,
+  ["3rd.sg.eng"]: string,
+  ["3rd.pl.eng"]: string,
+  ["1st.sg.span"]: string,
+  ["1st.pl.span"]: string,
+  ["2nd.sg.span"]: string,
+  ["2nd.pl.span"]: string,
+  ["3rd.sg.span"]: string,
+  ["3rd.pl.span"]: string,
 };
 
-interface PronounStateOLD {
-  gender: string | null,
-  nominitive: {
-    singular: WordPair,
-    plural: WordPair,
-  },
-  dative: {
-    singular: WordPair,
-    plural: WordPair,
-  },
-  accusitive: {
-    singular: WordPair,
-    plural: WordPair,
-  },
-  genitive: {
-    firstPerson: {
-      singular: {
-        masculine: WordPair, // mine (first-person masculine singular) - mio/mios
-        feminine: WordPair // mine (first-person feminine singular) - mia/mias
-      },
-      plural: {
-        masculine: WordPair, // mine (first-person masculine plural) - nuestro/nuestros
-        feminine: WordPair // mine (first-person feminine plural) - nuestra/nuestras
-      }
-    }
-  }
+export type EditablePronounState = [ ExtractedPronoun, ExtractedPronoun | null ];
+
+export interface ExtractedPronoun extends Record<string, string> {
+  ["gender"]: Gender | "",
+  ["nom.sg.eng"]: string,
+  ["nom.pl.eng"]: string,
+  ["dat.sg.eng"]: string,
+  ["dat.pl.eng"]: string,
+  ["acc.sg.eng"]: string,
+  ["acc.pl.eng"]: string,
+  ["nom.sg.span"]: string,
+  ["nom.pl.span"]: string,
+  ["dat.sg.span"]: string,
+  ["dat.pl.span"]: string,
+  ["acc.sg.span"]: string,
+  ["acc.pl.span"]: string,
+  ["gen.masc.pl.eng"]: string,
+  ["gen.masc.sg.eng"]: string,
+  ["gen.fem.sg.eng"]: string,
+  ["gen.fem.pl.eng"]: string,
+  ["gen.masc.sg.span"]: string,
+  ["gen.masc.pl.span"]: string,
+  ["gen.fem.sg.span"]: string,
+  ["gen.fem.pl.span"]: string,
+};
+
+export interface NewFormProps {
+  state: ExtractedState,
+  usingEnglish: boolean,
+  readOnly: boolean
 };
 
 export interface FormProps<State, Action> {

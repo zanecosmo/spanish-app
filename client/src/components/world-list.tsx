@@ -1,10 +1,10 @@
 import React, { FC, useState } from "react";
 import { useStore } from "../state/store";
 import { BaseWordPairDTO, Case, ExtendedWordDTO, Gender, GrammaticalNumber, PartsOfSpeech, ResponseBody, Roles, Store } from "../types";
-import { executeFetch } from "../utils";
+import { executeFetch, getWordPairsByPerson } from "../utils";
 import { AddNewWord } from "./TEST/adding-new-word";
 import { SelectedWord } from "./TEST/selectedWordTEST";
-import { ExtractedState, ExtractedWord } from "./TEST/types";
+import { ExtractedState, ExtractedVerb, ExtractedWord } from "./TEST/types";
 
 const convertToForm = (partOfSpeech: PartsOfSpeech, { wordPairs }: ExtendedWordDTO): ExtractedState => {
   if (wordPairs.length === 0) throw Error("EMPTY WORD PAIR ARRAY");
@@ -66,7 +66,7 @@ const convertToForm = (partOfSpeech: PartsOfSpeech, { wordPairs }: ExtendedWordD
 
       const gender = wordPairs[0].gender === null ? "" : wordPairs[0].gender as Gender;
 
-      console.log(wordPairs[0])
+      // console.log(wordPairs[0])
       // throwError(wordPairs[0].gender);
 
       const nomSingular = nom.find(wp => wp.number === GrammaticalNumber.SINGULAR);
@@ -92,42 +92,66 @@ const convertToForm = (partOfSpeech: PartsOfSpeech, { wordPairs }: ExtendedWordD
       const femSingular = genMasc.find(wp => wp.gender = GrammaticalNumber.SINGULAR);
       const femPlural = genMasc.find(wp => wp.gender = GrammaticalNumber.PLURAL);
 
-      console.log("nomSingular " + nomSingular)
-      console.log("nomPlural " + nomPlural)
-      console.log("datSingular " + datSingular)
-      console.log("datPlural " + datPlural)
-      console.log("accSingular " + accSingular)
-      console.log("accPlural " + accPlural)
-      console.log("genMasc " + genMasc)
-      console.log("mascSingular " + mascSingular)
-      console.log("mascPlural " + mascPlural)
-      console.log("femMasc " + femMasc)
-      console.log("femSingular " + femSingular)
-      console.log("femPlural " + femPlural)
+      // console.log("nomSingular " + nomSingular)
+      // console.log("nomPlural " + nomPlural)
+      // console.log("datSingular " + datSingular)
+      // console.log("datPlural " + datPlural)
+      // console.log("accSingular " + accSingular)
+      // console.log("accPlural " + accPlural)
+      // console.log("genMasc " + genMasc)
+      // console.log("mascSingular " + mascSingular)
+      // console.log("mascPlural " + mascPlural)
+      // console.log("femMasc " + femMasc)
+      // console.log("femSingular " + femSingular)
+      // console.log("femPlural " + femPlural)
 
       return {
         ["gender"]: gender,
-        ["nominitive.singular.english"]: nomSingular ? nomSingular.english : throwError(nomSingular),
-        ["nominitive.singular.spanish"]: nomSingular ? nomSingular.spanish : throwError(nomSingular),
-        ["nominitive.plural.english"]: nomPlural ? nomPlural.english : throwError(nomPlural),
-        ["nominitive.plural.spanish"]: nomPlural ? nomPlural.spanish : throwError(nomPlural),
-        ["dative.singular.english"]: datSingular ? datSingular.english : throwError(datSingular),
-        ["dative.singular.spanish"]: datSingular ? datSingular.spanish : throwError(datSingular),
-        ["dative.plural.english"]: datPlural ? datPlural.english : throwError(datPlural),
-        ["dative.plural.spanish"]: datPlural ? datPlural.spanish : throwError(datPlural),
-        ["accusitive.singular.english"]: accSingular ? accSingular.english : throwError(accSingular),
-        ["accusitive.singular.spanish"]: accSingular ? accSingular.spanish : throwError(accSingular),
-        ["accusitive.plural.english"]: accPlural ? accPlural.english : throwError(accPlural),
-        ["accusitive.plural.spanish"]: accPlural ? accPlural.spanish : throwError(accPlural),
-        ["genitive.masculine.singular.english"]: mascSingular ? mascSingular.english : throwError(mascSingular),
-        ["genitive.masculine.singular.spanish"]: mascSingular ? mascSingular.spanish : throwError(mascSingular),
-        ["genitive.masculine.plural.english"]: mascPlural ? mascPlural.english : throwError(mascPlural),
-        ["genitive.masculine.plural.spanish"]: mascPlural ? mascPlural.spanish : throwError(mascPlural),
-        ["genitive.feminine.singular.english"]: femSingular ? femSingular.english : throwError(femSingular),
-        ["genitive.feminine.singular.spanish"]: femSingular ? femSingular.spanish : throwError(femSingular),
-        ["genitive.feminine.plural.english"]: femPlural ? femPlural.english : throwError(femPlural),
-        ["genitive.feminine.plural.spanish"]: femPlural ? femPlural.spanish : throwError(femPlural),
+        ["nom.sg.eng"]: nomSingular ? nomSingular.english : throwError(nomSingular),
+        ["nom.sg.span"]: nomSingular ? nomSingular.spanish : throwError(nomSingular),
+        ["nom.pl.eng"]: nomPlural ? nomPlural.english : throwError(nomPlural),
+        ["nom.pl.span"]: nomPlural ? nomPlural.spanish : throwError(nomPlural),
+        ["dat.sg.eng"]: datSingular ? datSingular.english : throwError(datSingular),
+        ["dat.sg.span"]: datSingular ? datSingular.spanish : throwError(datSingular),
+        ["dat.pl.eng"]: datPlural ? datPlural.english : throwError(datPlural),
+        ["dat.pl.span"]: datPlural ? datPlural.spanish : throwError(datPlural),
+        ["acc.sg.eng"]: accSingular ? accSingular.english : throwError(accSingular),
+        ["acc.sg.span"]: accSingular ? accSingular.spanish : throwError(accSingular),
+        ["acc.pl.eng"]: accPlural ? accPlural.english : throwError(accPlural),
+        ["acc.pl.span"]: accPlural ? accPlural.spanish : throwError(accPlural),
+        ["gen.masc.sg.eng"]: mascSingular ? mascSingular.english : throwError(mascSingular),
+        ["gen.masc.sg.span"]: mascSingular ? mascSingular.spanish : throwError(mascSingular),
+        ["gen.masc.pl.eng"]: mascPlural ? mascPlural.english : throwError(mascPlural),
+        ["gen.masc.pl.span"]: mascPlural ? mascPlural.spanish : throwError(mascPlural),
+        ["gen.fem.sg.eng"]: femSingular ? femSingular.english : throwError(femSingular),
+        ["gen.fem.sg.span"]: femSingular ? femSingular.spanish : throwError(femSingular),
+        ["gen.fem.pl.eng"]: femPlural ? femPlural.english : throwError(femPlural),
+        ["gen.fem.pl.span"]: femPlural ? femPlural.spanish : throwError(femPlural),
       };
+    };
+
+    case PartsOfSpeech.VERB: {
+      const infinitive = wordPairs.find(wp => wp.infinitive === true);
+
+      if (!infinitive) throw Error("NO INFINITIVE");
+  
+      const form: ExtractedVerb = {
+        ["infinitive"]: infinitive.english,
+        ["1st.sg.eng"]: getWordPairsByPerson("ENGLISH", wordPairs, wp => wp.person === 1).singular,
+        ["1st.pl.eng"]: getWordPairsByPerson("SPANISH", wordPairs, wp => wp.person === 1).plural,
+        ["2nd.sg.eng"]: getWordPairsByPerson("ENGLISH", wordPairs, wp => wp.person === 1).singular,
+        ["2nd.pl.eng"]: getWordPairsByPerson("SPANISH", wordPairs, wp => wp.person === 1).plural,
+        ["3rd.sg.eng"]: getWordPairsByPerson("ENGLISH", wordPairs, wp => wp.person === 2).singular,
+        ["3rd.pl.eng"]: getWordPairsByPerson("SPANISH", wordPairs, wp => wp.person === 2).plural,
+        ["1st.sg.span"]: getWordPairsByPerson("ENGLISH", wordPairs, wp => wp.person === 2).singular,
+        ["1st.pl.span"]: getWordPairsByPerson("SPANISH", wordPairs, wp => wp.person === 2).plural,
+        ["2nd.sg.span"]: getWordPairsByPerson("ENGLISH", wordPairs, wp => wp.person === 3).singular,
+        ["2nd.pl.span"]: getWordPairsByPerson("SPANISH", wordPairs, wp => wp.person === 3).plural,
+        ["3rd.sg.span"]: getWordPairsByPerson("ENGLISH", wordPairs, wp => wp.person === 3).singular,
+        ["3rd.pl.span"]: getWordPairsByPerson("SPANISH", wordPairs, wp => wp.person === 3).plural
+      };
+
+      return form;
     };
 
     case PartsOfSpeech.ADJECTIVE: {
@@ -135,9 +159,6 @@ const convertToForm = (partOfSpeech: PartsOfSpeech, { wordPairs }: ExtendedWordD
       const feminine = wordPairs.filter(wp => wp.gender === Gender.FEMININE);
 
       if (!masculine || !feminine) throw Error("MISSING ADJECTIVE BY GENDER");
-
-      console.log(masculine);
-      console.log(feminine);
 
       const masculineSingular = masculine.find(wp => wp.number === GrammaticalNumber.SINGULAR);
       const masculinePlural = masculine.find(wp => wp.number === GrammaticalNumber.PLURAL);
@@ -172,8 +193,6 @@ const convertToForm = (partOfSpeech: PartsOfSpeech, { wordPairs }: ExtendedWordD
       }
     }
   };
-
-  throw Error("INVALID PART OF SPEECH OR UNIMPLEMENTED");
 };
 
 const getExtractedWord = async (id: number): Promise<ExtractedWord> => {
@@ -190,6 +209,9 @@ const getExtractedWord = async (id: number): Promise<ExtractedWord> => {
   };
   
   const partOfSpeech = word.wordPairs[0].part_of_speech;
+
+  console.log(partOfSpeech);
+
   const extractedState: ExtractedState = convertToForm(partOfSpeech, word);
 
   return {

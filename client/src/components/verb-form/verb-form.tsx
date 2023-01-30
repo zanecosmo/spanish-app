@@ -1,47 +1,45 @@
-import React, { ChangeEvent, FC, useEffect } from "react";
-import { useStore } from "../../state/store"
-import { Store, VerbFormStateAndSetters } from "../../types";
+import React, { ChangeEvent, FC, useState } from "react";
 import styles from "../../styles/Styles.module.css";
+import { EditableVerbState, ExtractedVerb, NewFormProps } from "../TEST/types";
 
-export const VerbForm: FC = () => {
-  const isEnglish = useStore((state: Store) => state.home.isEnglish);
+export const Verb: FC<NewFormProps> = (props) => {
+  const { state: initialState, readOnly, usingEnglish } = props;
 
-  const  stateAndSetters: VerbFormStateAndSetters = (
-    isEnglish
-      ? useStore((state: Store) => state.home.forms.verb.english)
-      : useStore((state: Store) => state.home.forms.verb.spanish)
-  );
+  const [ state, setState ] = useState<EditableVerbState>([ initialState as ExtractedVerb, null ]);
 
-  const { infinitive, firstPerson, secondPerson, thirdPerson } = stateAndSetters.state;
-  const { set, resetForm, convertToForm } = stateAndSetters;
-  const { isEditing, isAdding } = useStore((state: Store) => state.home.actions);
+  const currentState = state[1] ? state[1] : state[0];
+  
+  const handleChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) => {
+    if (!state) return;
+    const newState: ExtractedVerb = { ...currentState, [e.target.name]: e.target.value };
+    setState([ state[0], newState ]);
+  };
 
-  console.log("COMPONENT RENDERS", isEnglish)
-
-  useEffect(() => {
-    console.log("USE EFFECT", isEnglish);
-    !isAdding && convertToForm();
-  }, [isEnglish]);
-
-  useEffect(() => void isAdding && resetForm(), []);
-
-  const readOnly = isEditing || isAdding ? false : true;
-
-  const log = () => <>{"MADE IT HERE " + isEnglish}</>;
-
+  const renderInput = (name: string, label?: string):JSX.Element => {
+    return (
+      <div>
+        {label && <label htmlFor={name}>{label}</label>}
+        <input
+          type="text"
+          name={name}
+          className={styles["username login"]}
+          value={currentState[name]}
+          readOnly={readOnly}
+          onChange={handleChange}
+          />
+      </div>
+    );
+  };
+  
+  const tableInputNames: string[] = [ "1st.sg", "1st.pl", "2nd.sg", "2nd.pl", "3rd.sg", "3rd.pl" ];
+  
+  const lang: string = usingEnglish ? "eng" : "span";
+  
+  const inputElements: JSX.Element[] = tableInputNames.map(name => renderInput(`${name}.${lang}`));
+  
   return (
     <div>
-      <label htmlFor="infinitive">Infinitive:</label>
-      <input
-        type="text"
-        id="infinitive"
-        value={infinitive}
-        className={styles["username login"]}
-        readOnly={readOnly}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          set.infinitive(e.target.value);
-        }}
-      />
+      {renderInput("infinitive", "Infinitive")}
       <br />
         <table>
           <thead>
@@ -54,82 +52,21 @@ export const VerbForm: FC = () => {
           <tbody>
             <tr>
               <th>1st Person</th>
-              <td>
-                <input
-                  type="text"
-                  value={firstPerson.singular}
-                  className={styles["username login"]}
-                  readOnly={readOnly}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    set.firstPerson.singular(e.target.value);
-                  }}
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={firstPerson.plural}
-                  className={styles["username login"]}
-                  readOnly={readOnly}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    set.firstPerson.plural(e.target.value);
-                  }}
-                />
-              </td>
+              <td>{inputElements[0]}</td>
+              <td>{inputElements[1]}</td>
             </tr>
             <tr>
               <th>2nd Person</th>
-              <td>
-                <input
-                  type="text"
-                  value={secondPerson.singular}
-                  className={styles["username login"]}
-                  readOnly={readOnly}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    set.secondPerson.singular(e.target.value);
-                  }}
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={secondPerson.plural}
-                  className={styles["username login"]}
-                  readOnly={readOnly}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    set.secondPerson.plural(e.target.value);
-                  }}
-                />
-              </td>
+              <td>{inputElements[2]}</td>
+              <td>{inputElements[3]}</td>
             </tr>
             <tr>
               <th>3rd Person</th>
-              <td>
-                <input
-                  type="text"
-                  value={thirdPerson.singular}
-                  className={styles["username login"]}
-                  readOnly={readOnly}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    set.thirdPerson.singular(e.target.value);
-                  }}
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={thirdPerson.plural}
-                  className={styles["username login"]}
-                  readOnly={readOnly}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    set.thirdPerson.plural(e.target.value);
-                  }}
-                />
-              </td>
+              <td>{inputElements[4]}</td>
+              <td>{inputElements[5]}</td>
             </tr>
           </tbody>
       </table>
-      {log()}
     </div>
   )
 };

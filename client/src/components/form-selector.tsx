@@ -12,19 +12,25 @@ import { AdverbAction } from "./TEST/reducers/adverb";
 import { ConjunctionAction } from "./TEST/reducers/conjunction";
 import { NounAction } from "./TEST/reducers/noun";
 import { PrepositionAction } from "./TEST/reducers/preposition";
-import { PronounFormProps } from "./TEST/TEST-pronoun-state";
-import { ExtractedAdjective, ExtractedAdverb, ExtractedConjunction, ExtractedNoun, ExtractedPreposition, ExtractedPronoun, ExtractedState, FormProps } from "./TEST/types";
-import { Verb } from "./verb-form/verb";
+import { ExtractedAdjective, ExtractedAdverb, ExtractedConjunction, ExtractedNoun, ExtractedPreposition, ExtractedPronoun, ExtractedState, ExtractedVerb, FormProps, NewFormProps } from "./TEST/types";
+import { Verb } from "./verb-form/verb-form";
 
 interface FormSelectorProps {
   partOfSpeech: PartsOfSpeech;
-  formProps: FormProps<ExtractedState, Action>;
-  pronounFormProps: PronounFormProps;
+  formProps: FormProps<ExtractedState, Action> | NewFormProps;
 };
 
 export const FormSelector: FC<FormSelectorProps> = (props) => {
   switch (props.partOfSpeech) {
-    case PartsOfSpeech.VERB: return <Verb />;
+    case PartsOfSpeech.VERB: {
+      const verbFormProps: NewFormProps = {
+        state: props.formProps.state as ExtractedVerb,
+        readOnly: props.formProps.readOnly,
+        usingEnglish: props.formProps.usingEnglish
+      };
+
+      return <Verb { ...verbFormProps } />;
+    }
 
     case PartsOfSpeech.ADVERB: {
       return <Adverb { ...(props.formProps as FormProps<ExtractedAdverb, AdverbAction>) } />;
@@ -35,10 +41,10 @@ export const FormSelector: FC<FormSelectorProps> = (props) => {
     };
 
     case PartsOfSpeech.PRONOUN: {
-      const pronounFormProps: PronounFormProps = {
-        pronounState: props.pronounFormProps.pronounState as ExtractedPronoun,
-        readOnly: props.pronounFormProps.readOnly,
-        usingEnglish: props.pronounFormProps.usingEnglish
+      const pronounFormProps: NewFormProps = {
+        state: props.formProps.state as ExtractedPronoun,
+        readOnly: props.formProps.readOnly,
+        usingEnglish: props.formProps.usingEnglish
       };
 
       return <Pronoun { ...pronounFormProps } />;
