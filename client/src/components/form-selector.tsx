@@ -1,66 +1,49 @@
 import React, { FC } from "react";
 import { PartsOfSpeech } from "../types";
-import { Adjective } from "./adjective-form/adjective";
-import { Adverb } from "./adverb-form/adverb";
-import { Conjunction } from "./conjunction-form/conjunction";
-import { Noun } from "./noun-form/noun";
-import { Preposition } from "./preposition-form/preposition";
-import { Pronoun } from "./pronoun-form/pronoun";
-import { Action } from "./TEST/extended-word-state-hook";
-import { AdjectiveAction } from "./TEST/reducers/adjective";
-import { AdverbAction } from "./TEST/reducers/adverb";
-import { ConjunctionAction } from "./TEST/reducers/conjunction";
-import { NounAction } from "./TEST/reducers/noun";
-import { PrepositionAction } from "./TEST/reducers/preposition";
-import { ExtractedAdjective, ExtractedAdverb, ExtractedConjunction, ExtractedNoun, ExtractedPreposition, ExtractedPronoun, ExtractedState, ExtractedVerb, FormProps, NewFormProps } from "./TEST/types";
-import { Verb } from "./verb-form/verb-form";
+import { Adjective } from "./form-inputs/adjective";
+import { Adverb } from "./form-inputs/adverb";
+import { Conjunction } from "./form-inputs/conjunction";
+import { Noun } from "./form-inputs/noun";
+import { Preposition } from "./form-inputs/preposition";
+import { Pronoun } from "./form-inputs/pronoun";
+import { NewFormProps } from "../types";
+import { Verb } from "./form-inputs/verb";
 
 interface FormSelectorProps {
   partOfSpeech: PartsOfSpeech;
-  formProps: FormProps<ExtractedState, Action> | NewFormProps;
+  formProps: NewFormProps;
 };
 
 export const FormSelector: FC<FormSelectorProps> = (props) => {
-  switch (props.partOfSpeech) {
-    case PartsOfSpeech.VERB: {
-      const verbFormProps: NewFormProps = {
-        state: props.formProps.state as ExtractedVerb,
-        readOnly: props.formProps.readOnly,
-        usingEnglish: props.formProps.usingEnglish
-      };
 
-      return <Verb { ...verbFormProps } />;
+  switch (props.partOfSpeech) {
+
+    case PartsOfSpeech.VERB: {
+      return <Verb { ...props.formProps } />;
     }
 
     case PartsOfSpeech.ADVERB: {
-      return <Adverb { ...(props.formProps as FormProps<ExtractedAdverb, AdverbAction>) } />;
+      return <Adverb { ...props.formProps } />;
     }
 
     case PartsOfSpeech.NOUN: {
-      return <Noun { ...(props.formProps as FormProps<ExtractedNoun, NounAction>) }/>
+      return <Noun { ...(props.formProps) }/>
     };
 
     case PartsOfSpeech.PRONOUN: {
-      const pronounFormProps: NewFormProps = {
-        state: props.formProps.state as ExtractedPronoun,
-        readOnly: props.formProps.readOnly,
-        usingEnglish: props.formProps.usingEnglish
-      };
-
-      return <Pronoun { ...pronounFormProps } />;
+      return <Pronoun { ...props.formProps } />;
     };
 
     case PartsOfSpeech.ADJECTIVE: {
-      return <Adjective { ...(props.formProps as FormProps<ExtractedAdjective, AdjectiveAction>) } />;
+      return <Adjective { ...props.formProps } />;
     };
 
     case PartsOfSpeech.PREPOSITION: {
-      return <Preposition { ...(props.formProps as FormProps<ExtractedPreposition, PrepositionAction>) } />
+      return <Preposition { ...props.formProps } />
     };
 
     case PartsOfSpeech.CONJUNCTION: {
-      return <Conjunction { ...(props.formProps as FormProps<ExtractedConjunction, ConjunctionAction>) }/>;
-    }
-    default: throw Error("INVALID PART OS SPEECH");
+      return <Conjunction { ...props.formProps }/>;
+    };
   };
 };

@@ -1,16 +1,17 @@
 import sql, { ConnectionPool, Transaction } from "mssql";
-import { Word, WordPair } from "../../../types";
+import { ExtendedWordDTO, ExtendedWordPairDTO, Word, WordPair } from "../../../types";
 
-export const updateWord = async (word: Word, pool: ConnectionPool): Promise<number> => {
+export const updateWord = async (word: ExtendedWordDTO, pool: ConnectionPool): Promise<number> => {
     const transaction: Transaction = await pool.transaction().begin();
 
     while (word.wordPairs.length > 0) {
-        const wordPair: WordPair | undefined = word.wordPairs.pop();
+        const wordPair: ExtendedWordPairDTO | undefined = word.wordPairs.pop();
         if (!wordPair) break;
+        console.log(wordPair)
         await transaction.request()
         .input("english", sql.NVarChar(50), wordPair.english)
         .input("spanish", sql.NVarChar(50), wordPair.spanish)
-        .input("word_pair_ID", sql.Int, wordPair.id)
+        .input("word_pair_ID", sql.Int, wordPair.word_pair_id)
         .execute("update_word_pair");
     };
 

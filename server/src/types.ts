@@ -2,7 +2,7 @@ import { Request } from "express";
 import { PreparedStatement, Transaction } from "mssql";
 
 export interface GrammaticalInfo {
-    partOfSpeech: PartsOfSpeech;
+    part_of_speech: PartsOfSpeech;
     infinitive: boolean;
     person: number | null;
     number: string | null;
@@ -62,11 +62,10 @@ export interface WordsPayload {
 };
 
 export interface ExtendedWordPairDTO extends GrammaticalInfo {
-    id: number;
-    parentId: number;
+    word_pair_id: number | null;
+    parent_word_id: number | null;
     english: string;
     spanish: string;
-    partOfSpeech: PartsOfSpeech;
     group: string | null;
     difficulty: number | null;
 };
@@ -93,7 +92,7 @@ export interface Database {
     isConnected: () => boolean;
     insertWord: (word: Word) => Promise<number>;
     deleteWord: (parentId: number) => Promise<void>;
-    updateWord: (word: Word) => Promise<number>;
+    updateWord: (word: ExtendedWordDTO) => Promise<number>;
     getUserById: (id: number) => Promise<U<User>>;
     getUserByUsername: (username: string) => Promise<U<User>>;
     createUser: (user: User) => Promise<UserDTO>;

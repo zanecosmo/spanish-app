@@ -16,7 +16,7 @@ export const insertWord = async (word: Word, pool: ConnectionPool): Promise<numb
         .input("english", sql.NVarChar(50), wordPair.english)
         .input("spanish", sql.NVarChar(50), wordPair.spanish)
         .input("parent_Id", sql.Int, parentId)
-        .input("part_of_speech", sql.NVarChar(20), wordPair.partOfSpeech)
+        .input("part_of_speech", sql.NVarChar(20), wordPair.part_of_speech)
         .input("infinitive", sql.Bit, wordPair.infinitive)
         .input("person", sql.Int, wordPair.person)
         .input("number", sql.NVarChar(20) || null, wordPair.number)

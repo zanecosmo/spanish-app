@@ -1,4 +1,4 @@
-import { FormEvent } from "react";
+import { Dispatch, FormEvent, SetStateAction } from "react";
 
 export enum Roles {
     ADMIN = "ADMIN",
@@ -98,32 +98,9 @@ export interface VerbFormSlice {
 
 export interface HomeSlice {
     wordList: Array<BaseWordPairDTO> | null;
-    actions: {
-        isEditing: boolean,
-        setIsEditing: (bool:boolean) => void;
-        isAdding: boolean,
-        setIsAdding: (bool:boolean) => void;
-        isDeleting: boolean,
-        setIsDeleting: (bool:boolean) => void;
-        isEditingGroup: boolean,
-        setIsEditingGroup: (bool:boolean) => void;
-    },
-    isWordSelected: boolean;
-    setIsWordSelected: (bool: boolean) => void;
-    partOfSpeech: PartsOfSpeech | null;
-    setPartOfSpeech: (partOfSpeech: PartsOfSpeech) => void;
-    AddNewWord: () => void;
     groups: Array<string>;
-    attemptUpdateGroup: (value: string) => void;
+    setGroups: (group: string) => void;
     getWordsPayload: () => void;
-    getWord: (wordId: number) => void;
-    selectedWord: ExtendedWordDTO | null;
-    nullifySelectedWord: () => void;
-    forms: {
-        verb: VerbFormSlice
-    };
-    isEnglish: boolean,
-    setIsEnglish: (bool: boolean) => void
 };
 
 export interface GroupDTO {
@@ -195,7 +172,7 @@ export interface NewWordPair extends GrammaticalInfo {
 };
 
 export interface ExtendedWordDTO {
-    id: number | undefined;
+    id: number | null;
     group: string | null;
     wordPairs: Array<ExtendedWordPairDTO>;
 };
@@ -232,3 +209,113 @@ export enum Case {
     DATIVE = "DATIVE",
     ACCUSITIVE = "ACCUSITIVE"
 };
+
+export type ExtractedState =
+| ExtractedConjunction
+| ExtractedNoun //
+| ExtractedPreposition
+| ExtractedAdjective //
+| ExtractedAdverb
+| ExtractedVerb
+| ExtractedPronoun;
+
+export interface WordPair extends Record<string, string | number> {
+  ["eng"]: string,
+  ["span"]: string
+};
+
+export type WordPairWithID = {
+    id: number | null,
+    difficulty: number | null,
+    wordPair: WordPair
+};
+
+export type ExtractedWord = {
+  partOfSpeech: PartsOfSpeech,
+  id: number | null,
+  group: string | null,
+  state: ExtractedState
+};
+
+export interface ExtractedConjunction extends WordPairWithID {};
+
+export interface ExtractedNoun extends Record<string, WordPairWithID | (Gender | "")> {
+  ["gender"]: Gender | "",
+  ["sg"]: WordPairWithID,
+  ["pl"]: WordPairWithID,
+};
+
+export interface ExtractedPreposition extends WordPairWithID {};
+
+export interface ExtractedAdjective extends Record<string, WordPairWithID> {
+  ["masc.sg"]: WordPairWithID,
+  ["masc.pl"]: WordPairWithID,
+  ["fem.sg"]: WordPairWithID,
+  ["fem.pl"]: WordPairWithID
+};
+
+export interface ExtractedAdverb extends WordPairWithID {};
+
+export interface ExtractedVerb extends Record<string, WordPairWithID> {
+  ["inf"]: WordPairWithID,
+  ["1st.sg"]: WordPairWithID,
+  ["1st.pl"]: WordPairWithID,
+  ["2nd.sg"]: WordPairWithID,
+  ["2nd.pl"]: WordPairWithID,
+  ["3rd.sg"]: WordPairWithID,
+  ["3rd.pl"]: WordPairWithID
+};
+
+export interface ExtractedPronoun extends Record<string, WordPairWithID | (Gender | "")> {
+  ["gender"]: Gender | "",
+  ["nom.sg"]: WordPairWithID,
+  ["nom.pl"]: WordPairWithID,
+  ["dat.sg"]: WordPairWithID,
+  ["dat.pl"]: WordPairWithID,
+  ["acc.sg"]: WordPairWithID,
+  ["acc.pl"]: WordPairWithID,
+  ["gen.masc.pl"]: WordPairWithID,
+  ["gen.masc.sg"]: WordPairWithID,
+  ["gen.fem.sg"]: WordPairWithID,
+  ["gen.fem.pl"]: WordPairWithID,
+};
+
+export interface InitialState extends Record<PartsOfSpeech, ExtractedState> {
+  [PartsOfSpeech.ADJECTIVE]: ExtractedAdjective,
+  [PartsOfSpeech.ADVERB]: ExtractedAdverb,
+  [PartsOfSpeech.CONJUNCTION]: ExtractedConjunction,
+  [PartsOfSpeech.NOUN]: ExtractedNoun,
+  [PartsOfSpeech.PREPOSITION]: ExtractedPreposition,
+  [PartsOfSpeech.PRONOUN]: ExtractedPronoun,
+  [PartsOfSpeech.VERB]: ExtractedVerb,
+}
+
+export interface NewFormProps {
+  wordSelected: ExtractedWord,
+  setWordSelected: Dispatch<SetStateAction<ExtractedWord | null>>,
+  usingEnglish: boolean,
+  readOnly: boolean
+};
+
+export interface FormProps<State, Action> {
+  state: State,
+  dispatch: Dispatch<Action>,
+  readOnly: boolean,
+  usingEnglish: boolean
+};
+
+// export interface GrammaticalInfo {
+//     partOfSpeech: PartsOfSpeech;
+//     infinitive: boolean;
+//     person: number | null;
+//     number: string | null;
+//     gender: string | null;
+//     case: string | null;
+// };
+
+// export interface WordPairDTO extends GrammaticalInfo {
+//     id: number | undefined;
+//     spanish: string;
+//     english: string;
+//     parentId: number | undefined;
+// };

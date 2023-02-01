@@ -58,7 +58,7 @@ const run = async () => {
                     english: "in/on",
                     spanish: "en",
                     parentId: undefined,
-                    partOfSpeech: PartsOfSpeech.PREPOSITION,
+                    part_of_speech: PartsOfSpeech.PREPOSITION,
                     infinitive: false,
                     person: null,
                     number: null,

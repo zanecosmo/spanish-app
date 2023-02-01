@@ -31,7 +31,6 @@ export async function executeFetch(
     };
 
     if (body) request.body = JSON.stringify(body);
-
     
     const response: Response = await fetch(url, request);
     // console.log(response)
@@ -53,6 +52,7 @@ export const getWordPairsByPerson = (
     if (!singular || !plural) throw Error("MISSING WORD BASED ON PERSON");
   
     return {
+      id: singular.word_pair_id,
       singular: language === "SPANISH" ? singular.spanish : singular.english,
       plural: language === "SPANISH" ? plural.spanish : plural.english,
     };
