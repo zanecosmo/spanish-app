@@ -12,14 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = void 0;
+exports.updateGroup = void 0;
 const mssql_1 = __importDefault(require("mssql"));
-const getUserById = (id, pool) => __awaiter(void 0, void 0, void 0, function* () {
+const updateGroup = (groupDTO, user, pool) => __awaiter(void 0, void 0, void 0, function* () {
     const transaction = yield pool.transaction().begin();
-    const userResult = yield transaction.request()
-        .input("id", mssql_1.default.Int, id)
-        .execute("get_user_by_id");
-    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE: get_user_by_id"));
-    return userResult.recordset[0];
+    // const updateGroupResult: IProcedureResult<any> = 
+    yield transaction.request()
+        .input("parent_word_id", mssql_1.default.Int, groupDTO.parentWordId)
+        .input("group", mssql_1.default.NVarChar, groupDTO.group === "None" ? null : groupDTO.group)
+        .input("user_id", mssql_1.default.Int, user.id)
+        .execute("update_group");
+    const getGroupsByUserResult = yield transaction.request()
+        .input("user_id", mssql_1.default.Int, user.id)
+        .execute("get_groups_by_user");
+    const groups = getGroupsByUserResult.recordset;
+    const groupArray = [];
+    for (const group in groups)
+        groupArray.push(groups[group].group);
+    transaction.commit(err => err ? err : console.log("TRANSACTION COMPLETE: update_group"));
+    return groupArray;
 });
-exports.getUserById = getUserById;
+exports.updateGroup = updateGroup;

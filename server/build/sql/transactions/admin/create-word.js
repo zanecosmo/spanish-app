@@ -12,23 +12,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateWord = void 0;
+exports.insertWord = void 0;
 const mssql_1 = __importDefault(require("mssql"));
-const updateWord = (word, pool) => __awaiter(void 0, void 0, void 0, function* () {
+const insertWord = (word, pool) => __awaiter(void 0, void 0, void 0, function* () {
     const transaction = yield pool.transaction().begin();
+    const createBaseWord = yield transaction.request()
+        .execute("create_base_word");
+    const parentId = createBaseWord.returnValue;
     while (word.wordPairs.length > 0) {
         const wordPair = word.wordPairs.pop();
         if (!wordPair)
             break;
-        console.log(wordPair);
         yield transaction.request()
             .input("english", mssql_1.default.NVarChar(50), wordPair.english)
             .input("spanish", mssql_1.default.NVarChar(50), wordPair.spanish)
-            .input("word_pair_ID", mssql_1.default.Int, wordPair.word_pair_id)
-            .execute("update_word_pair");
+            .input("parent_Id", mssql_1.default.Int, parentId)
+            .input("part_of_speech", mssql_1.default.NVarChar(20), wordPair.part_of_speech)
+            .input("infinitive", mssql_1.default.Bit, wordPair.infinitive)
+            .input("person", mssql_1.default.Int, wordPair.person)
+            .input("number", mssql_1.default.NVarChar(20) || null, wordPair.number)
+            .input("gender", mssql_1.default.NVarChar(20), wordPair.gender)
+            .input("case", mssql_1.default.NVarChar(20), wordPair.case)
+            .execute("build_pairs");
     }
     ;
-    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE: update_word_pair"));
-    return word.id;
+    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE: create_base_word + build_pairs"));
+    return parentId;
 });
-exports.updateWord = updateWord;
+exports.insertWord = insertWord;

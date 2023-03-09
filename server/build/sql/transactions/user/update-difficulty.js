@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31,87 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mssql_1 = __importStar(require("mssql"));
-var database_config_1 = require("../../database/database-config");
-var utils_1 = require("../../utils");
-// if the difficulty exists, update it. if it doesn't create a new one
-// takes in Array<WordPair>
-var updateDifficulties = function (word) { return __awaiter(void 0, void 0, void 0, function () {
-    var pool, transaction, ps, operation;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, mssql_1.default.connect(database_config_1.databaseConfig)];
-            case 1:
-                pool = _a.sent();
-                transaction = new mssql_1.Transaction(pool);
-                ps = new mssql_1.default.PreparedStatement(transaction);
-                operation = {
-                    transaction: transaction,
-                    preparedStatement: ps,
-                    result: undefined,
-                    word: word
-                };
-                beginUpdateTransaction(operation);
-                return [2 /*return*/];
-        }
-    });
-}); };
-var beginUpdateTransaction = function (op) {
-    op.transaction.begin(undefined, function (err) { return checkForRows(err, op); });
-};
-var checkForRows = function (err, op) {
-    (0, utils_1.logError)(err);
-    var statement = ("\n        UPDATE word_pair_auxiliary_info\n        SET difficulty = WordPair.difficulty\n        WHERE word_pair_auxiliary_info.word_pair_id = @word_pair_id\n        OUTPUT @@ROWCOUNT = 0\n        BEGIN\n        INSERT dbo.table(PK, ...) SELECT @PK, ...;\n        END\n        COMMIT TRANSACTION;\n        ");
-    op.preparedStatement.input("word_pair_id", mssql_1.default.Int);
-    op.preparedStatement.prepare(statement, function (err) { return executeStatement(err, op); });
-};
-var executeStatement = function (err, op) {
-    (0, utils_1.logError)(err);
-    var parameters = { wordPairId: op.word.id }; // this will change
-    op.preparedStatement.execute(parameters, function (err, result) { return unprepareStatement(err, result, op); });
-};
-var unprepareStatement = function (err, result, op) {
-    (0, utils_1.logError)(err);
-    if (!result)
-        return; // throw error
-    if (result.recordset[0] === 0) {
-        // const transaction = new Transaction(pool);
-        // const ps = new sql.PreparedStatement(transaction);
-        // const operation: SqlOperation<any> = {
-        //     transaction: transaction,
-        //     preparedStatement: ps,
-        //     result: undefined,
-        //     word: word
-        // };
+exports.updateDifficulties = void 0;
+const mssql_1 = __importDefault(require("mssql"));
+const updateDifficulties = (difficultyDTOs, user, pool) => __awaiter(void 0, void 0, void 0, function* () {
+    const transaction = yield pool.transaction().begin();
+    while (difficultyDTOs.length > 0) {
+        const difficulty = difficultyDTOs.pop();
+        if (!difficulty)
+            break;
+        yield transaction.request()
+            .input("word_pair_id", mssql_1.default.Int, difficulty.wordPairId)
+            .input("difficulty", mssql_1.default.Int, difficulty.difficulty)
+            .input("user_id", mssql_1.default.Int, user.id)
+            .execute("update_or_create_difficulty");
     }
-    // op.preparedStatement.unprepare((err) => nextStatement(err, op));
-};
-// wordPair = array.pop()
+    ;
+    transaction.commit(err => err ? err : console.log("TRANSACTION COMPLETE: update_or_create_difficulty"));
+});
+exports.updateDifficulties = updateDifficulties;

@@ -1,6 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GrammaticalNumber = exports.PartsOfSpeech = exports.Roles = void 0;
+exports.Cases = exports.Gender = exports.GrammaticalNumber = exports.PartsOfSpeech = exports.Roles = void 0;
+;
+;
+;
+;
+;
+;
+;
+;
 ;
 ;
 ;
@@ -32,5 +40,19 @@ var GrammaticalNumber;
     GrammaticalNumber["SINGULAR"] = "singular";
     GrammaticalNumber["PLURAL"] = "plural";
 })(GrammaticalNumber = exports.GrammaticalNumber || (exports.GrammaticalNumber = {}));
+;
+var Gender;
+(function (Gender) {
+    Gender["MASCULINE"] = "MASCULINE";
+    Gender["FEMININE"] = "FEMININE";
+})(Gender = exports.Gender || (exports.Gender = {}));
+;
+var Cases;
+(function (Cases) {
+    Cases["NOMINATIVE"] = "NOMINATIVE";
+    Cases["GENITIVE"] = "GENITIVE";
+    Cases["DATIVE"] = "DATIVE";
+    Cases["ACCUSITIVE"] = "ACCUSITIVE";
+})(Cases = exports.Cases || (exports.Cases = {}));
 ;
 ;

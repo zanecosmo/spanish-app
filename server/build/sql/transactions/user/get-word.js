@@ -12,14 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = void 0;
+exports.getWord = void 0;
 const mssql_1 = __importDefault(require("mssql"));
-const getUserById = (id, pool) => __awaiter(void 0, void 0, void 0, function* () {
+const getWord = (wordId, user, pool) => __awaiter(void 0, void 0, void 0, function* () {
     const transaction = yield pool.transaction().begin();
-    const userResult = yield transaction.request()
-        .input("id", mssql_1.default.Int, id)
-        .execute("get_user_by_id");
-    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE: get_user_by_id"));
-    return userResult.recordset[0];
+    const getWordResult = yield transaction.request()
+        .input("user_id", mssql_1.default.Int, user.id)
+        .input("word_id", mssql_1.default.Int, wordId)
+        .execute("get_word");
+    const extendedWordDTO = {
+        id: wordId,
+        group: getWordResult.recordset[0].group,
+        wordPairs: getWordResult.recordset
+    };
+    transaction.commit(err => err ? console.log(err) : console.log("TRANSACTION COMPLETE: get_word"));
+    return extendedWordDTO;
 });
-exports.getUserById = getUserById;
+exports.getWord = getWord;
